@@ -1,0 +1,129 @@
+.contact-section {
+  background: linear-gradient(120deg, #1E3A8A 0%, #0f2562 100%);
+  color: #fff;
+  padding: 2rem 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.contact-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 3rem;
+  max-width: 1100px;
+  width: 100%;
+}
+
+/* LEFT SIDE */
+.contact-left {
+  flex: 1;
+  min-width: 300px;
+
+}
+
+.contact-left h2 {
+  font-size: 2.3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+.contact-left p {
+  color: #d1d5db;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  line-height: 1.7;
+  max-width: 90%;
+}
+.contact-info1 {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.info-item1 {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.icon1 {
+  color: #10B981;
+  font-size: 1.1rem;
+}
+/* RIGHT SIDE FORM */
+.contact-form {
+  flex: 1;
+  min-width: 350px;
+  height: 320px;
+  background: #fff;
+  color: #111827;
+  border-radius: 18px;
+  padding: 2.5rem;
+  padding-top: 1rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.contact-form h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+  color: #1E3A8A;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #f9fafb;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  outline: none;
+}
+
+.contact-form button {
+  background-color: #10B981;
+  color: white;
+  border: none;
+  padding: 0.9rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  width: 35%;
+}
+
+.contact-form button:hover {
+  background-color: #0e9972;
+  transform: translateY(-2px);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .contact-wrapper {
+    flex-direction: column;
+  }
+
+  .contact-form {
+    margin-top: 2rem;
+  }
+
+  .contact-left p {
+    max-width: 100%;
+  }
+}

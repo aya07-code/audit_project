@@ -1,0 +1,6 @@
+.content{
+  margin-top: 116px; /* 36px (info) + 80px (header) */
+  padding: 24px;
+  min-height: calc(100vh - 116px);
+  background: #f6f7fb;
+}

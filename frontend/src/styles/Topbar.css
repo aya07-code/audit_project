@@ -1,0 +1,55 @@
+.topbar {
+    background-color: #1a237e;
+    color: white;
+    padding: 8px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    gap: 12px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: row !important; /* force la ligne */
+  justify-content: flex-start;    /* start = à gauche, change si besoin */
+  gap: 16px;
+  align-items: center;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.contact-info span {
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.social-connect {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.social-connect a {
+    color: white;
+    text-decoration: none;
+}
+
+.social-connect a:hover {
+    color: #90caf9;
+}
+@media (max-width: 820px) {
+  .contact-info { display: none; } /* ou .contact-info { font-size:12px; } selon préférence */
+}

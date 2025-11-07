@@ -1,0 +1,12 @@
+.activities-page { padding-top: calc(36px + 64px + 24px);}
+.activities-hero { text-align:center; padding:2rem; background:#f7fafc; }
+.activities-grid { display:flex; gap:20px; max-width:1200px; margin:0 auto; padding:20px; }
+.activities-list { width:30%; border-right:1px solid #eef2f7; padding-right:16px; }
+.audits-panel { flex:1; padding-left:16px; }
+.activity-card { padding:12px; border-radius:8px; background:#fff; margin-bottom:10px; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
+.audit-card { padding:12px; margin-bottom:12px; background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
+
+@media (max-width: 880px) {
+  .activities-grid { flex-direction:column; padding:12px; }
+  .activities-list { width:100%; border-right:none; border-bottom:1px solid #eef2f7; padding-bottom:12px; }
+}

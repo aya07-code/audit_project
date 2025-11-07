@@ -1,0 +1,89 @@
+.value-section {
+  padding: 0.5rem 5rem;
+  padding-bottom: 3rem;
+  background: #fff;
+  text-align: center;
+}
+
+.value-section h2 {
+  margin-top:0 ;
+  font-size: 2.3rem;
+  margin-bottom: 0.5rem;
+  color: #1E3A8A ;
+  text-align: left;
+}
+
+.divider {
+  width: 80px;
+  height: 4px;
+  background-color: #10B981;
+  margin: 1rem auto 2rem;
+ margin-left: 0;
+}
+
+.value-intro {
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  color: #6B7280;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.value-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.value-card {
+  background-color: #F3F4F6;
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 20px rgba(30, 58, 138, 0.08);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border-top: 5px solid #10B981;
+}
+
+.value-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(30, 58, 138, 0.15);
+}
+
+.value-card h3 {
+  font-size: 2.5rem;
+  color: #1E3A8A;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.value-card p {
+  color: #6B7280;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Animation fade-in */
+.value-card {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s ease forwards;
+    animation-fill-mode: forwards;
+}
+
+.value-card:nth-child(1) { animation-delay: 0.2s; }
+.value-card:nth-child(2) { animation-delay: 0.4s; }
+.value-card:nth-child(3) { animation-delay: 0.6s; }
+.value-card:nth-child(4) { animation-delay: 0.8s; }
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
