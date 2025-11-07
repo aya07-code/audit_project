@@ -1,5 +1,13 @@
 const BASE = 'http://127.0.0.1:8000/api';
 
+export function getAuthHeaders() {
+  const token = localStorage.getItem('token');
+  return token
+    ? { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
+    : { 'Accept': 'application/json' };
+}
+
+
 export async function getCSRFToken() {
   try {
     await fetch('http://127.0.0.1:8000/sanctum/csrf-cookie', {
@@ -17,22 +25,21 @@ export async function getCSRFToken() {
 
 export async function apiPost(path, body) {
   try {
-    const xsrfToken = await getCSRFToken();
-
     console.log('Sending request to:', `${BASE}${path}`);
     console.log('With body:', body);
-    console.log('XSRF Token:', xsrfToken);
-    
+
+    const headers = {
+      ...getAuthHeaders(),
+      'Content-Type': 'application/json',
+    };
+
     const res = await fetch(`${BASE}${path}`, {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-XSRF-TOKEN': decodeURIComponent(xsrfToken || '')
-      },
+      headers,
       body: JSON.stringify(body)
     });
+
     console.log('Response status:', res.status);
     const responseData = await res.clone().json().catch(() => ({}));
     console.log('Response data:', responseData);
@@ -44,13 +51,12 @@ export async function apiPost(path, body) {
   }
 }
 
+
 export async function apiGet(path) {
   try {
     const res = await fetch(`${BASE}${path}`, {
       credentials: 'include',
-      headers: {
-        'Accept': 'application/json'
-      }
+      headers: getAuthHeaders(),
     });
     return res;
   } catch (e) {

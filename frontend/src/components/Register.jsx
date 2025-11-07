@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MdPerson, MdEmail, MdLock, MdPhone, MdLocationCity, MdHome } from 'react-icons/md';
 import '../styles/Register.css';
 import axios from 'axios';
-
-// import { apiPost } from '../utils/api';
+import Footer1 from './Footer1';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -28,31 +27,12 @@ const Register = () => {
         });
     };
 
-    // const getXsrfToken = () => {
-    //     return document.cookie
-    //         .split('; ')
-    //         .find(row => row.startsWith('XSRF-TOKEN='))
-    //         ?.split('=')[1];
-    // };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // setError('');
+        setError('');
         setLoading(true);
 
         try {
-            // Log the data being sent
-            // const response = await apiPost('/register', {
-            //     name: formData.name,
-            //     email: formData.email,
-            //     password: formData.password,
-            //     password_confirmation: formData.password_confirmation,
-            //     phone: formData.phone,
-            //     adress: formData.adress,
-            //     ville: formData.ville,
-            //     role: 'customer',
-            //     is_active: true
-            // });
                 const response = {
                 name: formData.name,
                 email: formData.email,
@@ -65,24 +45,35 @@ const Register = () => {
                 is_active: true
             };
             const responses = await axios.post("http://127.0.0.1:8000/api/register", response);
-            console.log('User registered::',responses.data); // Debug response
+            console.log('User registered:',responses.data); 
 
-      setSuccessMessage("Registration successful! Welcome to the platform.");
+      setSuccessMessage("Registration successful! Welcome to IA Morocco.");
       setError(null);
-      setFormData({ name: "", email: "", password: "", password_confirmation: "", phone: "", adress:"", ville:"" }); // Reset form
+      setFormData({ name: "", email: "", password: "", password_confirmation: "", phone: "", adress:"", ville:"" });
+      setLoading(false);
+      const userRole = responses.data.user.role || response.role;
+      if (userRole === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/customer/dashboard');
+      }
+
     } catch (err) {
       setError(err.responses?.data?.errors || { message: "An error occurred" });
       setSuccessMessage(null);
+      setLoading(false);
     }
   };
 
 
     return (
+        <div>
         <div className="auth-container1">
             <div className="auth-box1">
                 <h2>Create Account</h2>
                 <p className="auth-subtitle1">Please fill in the form to register</p>
-                {error && <div style={{background:'#fee2e2',color:'#dc2626',padding:'0.75rem',borderRadius:6,marginBottom:12}}>{error}</div>}
+                {error && <div style={{background:'#fee2e2',color:'#dc2626',padding:'0.75rem',borderRadius:6,marginBottom:12}}>{typeof error === 'object' ? error.message : error}</div>}
+                {successMessage && <div style={{background:'#d1fae5',color:'#065f46',padding:'0.75rem',borderRadius:6,marginBottom:12}}>{successMessage}</div>}
 
                 <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group1">
@@ -155,6 +146,8 @@ const Register = () => {
                 </p>
             </div>
         </div>
+         <Footer1 />
+    </div>
     );
 };
 
