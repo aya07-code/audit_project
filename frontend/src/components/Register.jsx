@@ -67,7 +67,7 @@ const Register = () => {
 
 
     return (
-        <div>
+      <div>
         <div className="auth-container1">
             <div className="auth-box1">
                 <h2>Create Account</h2>
@@ -147,7 +147,7 @@ const Register = () => {
             </div>
         </div>
          <Footer1 />
-    </div>
+      </div>
     );
 };
 

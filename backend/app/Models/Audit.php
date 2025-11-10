@@ -9,7 +9,7 @@ class Audit extends Model
 {
    use HasFactory;
 
-    protected $fillable = ['title', 'company_id', 'date', 'score'];
+    protected $fillable = ['title', 'company_id', 'date', 'score', 'description', 'image'];
 
     public function companies()
     {

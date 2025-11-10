@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MdEmail, MdLock } from 'react-icons/md';
 import '../styles/Login.css';
 import { apiPost } from '../utils/api';
+import Footer1 from './Footer1';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -45,6 +46,7 @@ const Login = () => {
         }
     };
     return (
+      <div>
         <div className="auth-container">
             <div className="auth-box">
                 <h2>Welcome Back</h2>
@@ -94,6 +96,8 @@ const Login = () => {
                 </p>
             </div>
         </div>
+            <Footer1 />
+      </div>
     );
 };
 

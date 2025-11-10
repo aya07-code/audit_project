@@ -35,7 +35,7 @@ class AuditController extends Controller
     // function pour les audits d'une activité spécifique 
     public function auditsForActivity(int $activityId)
     {
-        $audits = Audit::select('id', 'title', 'date', 'score', 'description', 'image')
+        $audits = Audit::select('id', 'title', 'date', 'score', 'description', 'image','updated_at')
             ->whereHas('activities', function($q) use ($activityId) {
                 $q->where('activities.id', $activityId);
             })

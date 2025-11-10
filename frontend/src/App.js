@@ -14,8 +14,6 @@ import ActivitiesPage from './components/ActivitiesPage';
 import DashboardCustomer from './components/DashboardCustomer';
 import DashboardAdmin from './components/DashboardAdmin';
 
-
-
 function App() {
   return (
     <Router>

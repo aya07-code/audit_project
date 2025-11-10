@@ -33,6 +33,7 @@
   transform: scale(1.05);
   box-shadow: 0 6px 15px rgba(30, 58, 138, 0.2);
   background-color: #10B98110;
+  cursor: pointer;
 }
 
 .partner-card img {

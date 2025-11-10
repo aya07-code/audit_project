@@ -44,11 +44,13 @@
   box-shadow: 0 4px 20px rgba(30, 58, 138, 0.08);
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   border-top: 5px solid #10B981;
+  cursor: pointer;
 }
 
 .value-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 8px 25px rgba(30, 58, 138, 0.15);
+  border-top: 5px solid #1E3A8A;
 }
 
 .value-card h3 {
@@ -56,6 +58,11 @@
   color: #1E3A8A;
   margin-bottom: 0.5rem;
   font-weight: 700;
+}
+
+.value-card:hover h3 {
+  color: #10B981;
+
 }
 
 .value-card p {
