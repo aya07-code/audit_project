@@ -1,20 +1,20 @@
 import React from "react";
 import SidebarAdmin from "./SidebarAdmin";
 import SidebarDash from "./SidebarDash";
-import AuditsTable from "./AuditsTable";
+import CompaniesTable from "./CompaniesTable";
 import "../styles/DashboardAdmin.css";
 
 
-const UpdateAudit = () => {
+const Companies = () => {
   return (
     <div className="admin-dashboard">
       <SidebarDash />
       <SidebarAdmin />
       <main className="admin-content">
-        <AuditsTable />
+        <CompaniesTable />
       </main>
     </div>
   );
 };
 
-export default UpdateAudit;
+export default Companies;

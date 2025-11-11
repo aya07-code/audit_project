@@ -69,11 +69,19 @@ class CompanyController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Company $company)
+    public function destroy($id)
     {
-        //
+        $company = Company::find($id);
+        if (!$company) {
+            return response()->json(['message' => 'Compagnie non trouvée'], 404);
+        }
+
+        try {
+            $company->delete();
+            return response()->json(['message' => 'Compagnie supprimée avec succès'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erreur lors de la suppression'], 500);
+        }
     }
+
 }

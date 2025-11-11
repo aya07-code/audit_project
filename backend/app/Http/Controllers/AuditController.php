@@ -310,5 +310,28 @@ class AuditController extends Controller
         ]);
     }
 
+    public function update(Request $request, $id)
+    {
+        $audit = Audit::find($id);
+
+        if (! $audit) {
+            return response()->json(['message' => 'Audit non trouvé'], 404);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $audit->update($validated);
+
+        return response()->json([
+            'message' => 'Audit mis à jour avec succès',
+            'audit' => $audit,
+        ]);
+    }
+
+
+
 
 }

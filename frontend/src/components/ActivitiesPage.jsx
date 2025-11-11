@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Footer1 from "./Footer1";
 import { apiGet } from "../utils/api";
 import "../styles/Activities.css";
 
@@ -158,8 +157,6 @@ const ActivitiesPage = () => {
           </button>
         </div>
       )}
-
-      <Footer1 />
     </div>
   );
 };

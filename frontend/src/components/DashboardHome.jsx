@@ -27,7 +27,7 @@ const DashboardAdmin = () => {
           });
 
           // 🧩 Diagnostic console
-          console.log("📦 Données brutes de l’API:", res.data);
+          console.log("📦 Données brutes de l'API:", res.data);
 
           const data = res.data;
 
@@ -93,7 +93,7 @@ const DashboardAdmin = () => {
 
   return (
     <div className="p-2 bg-gray-100 min-h-screen ">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800">📊 Tableau de bord Admin</h1>
+      <h1 className="text-3xl font-bold mb-8 text-slate-500">📊 Tableau de bord Admin</h1>
 
       {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -156,7 +156,7 @@ const DashboardAdmin = () => {
         {/* Revenus mensuels */}
         <div className="bg-white p-6 rounded-2xl shadow-lg w-[600px] mx-auto col-span-2">
           <h2 className="font-semibold mb-4 ">💰 Revenus mensuels</h2>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={250}>
             <BarChart data={summary.revenueByMonth}>
               <XAxis
                 dataKey="month"

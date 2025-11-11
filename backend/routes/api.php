@@ -31,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('customers', UserController::class);
         //Route pour lister toutes les compagnies avec le nom de owner ,le nom de l’activité, l’email et la ville de leur owner
         Route::get('/companies', [CompanyController::class, 'index']); 
+        // Route pour supprimer compagnie
+        Route::delete('/companies/{id}', [CompanyController::class, 'destroy']);
         // Route pour récupérer les audits pour company spécifique 
         Route::get('/audits/company/{companyId}', [AuditController::class, 'auditsForCompany']);
         //Routes récupérer tout questions d'une audit spécifique 
@@ -57,6 +59,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/payments/revenue-by-month', [PaymentController::class, 'revenueByMonth']);
         // Route pour le résumé des audits
         Route::get('/dashboard/summary', [AuditController::class, 'summary']);
+        // Route pour mettre à jour un audit
+        Route::put('/audits/{id}', [AuditController::class, 'update']);
 
     });
 
@@ -79,10 +83,12 @@ Route::middleware('auth:sanctum')->group(function () {
     //Route por lister tout les activity 
     Route::get('/activities', [ActivityController::class, 'index']);
     //Route por lister tout les audits 
-    Route::get('/audits', [AuditController::class, 'index']); 
+    Route::get('/audits', [AuditController::class, 'index']);
     //Route pour lister tout les audits d'une activité spécifique
     Route::get('/audits/activities/{activityId}', [AuditController::class, 'auditsForActivity']);
     // Route pour récupérer un audit spécifique
     Route::get('/audits/{id}', [AuditController::class, 'show']);
+
+    
 
 });

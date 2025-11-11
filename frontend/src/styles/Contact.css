@@ -60,7 +60,7 @@
 .contact-form {
   flex: 1;
   min-width: 350px;
-  height: 320px;
+  height: auto;
   background: #fff;
   color: #111827;
   border-radius: 18px;

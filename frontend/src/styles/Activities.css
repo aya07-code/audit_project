@@ -16,6 +16,8 @@
 }
 .header-top h1 {
   color: #1E3A8A;
+  font-size: 26px;
+  font-weight: 700;
 }
 
 .activities-filter p {
