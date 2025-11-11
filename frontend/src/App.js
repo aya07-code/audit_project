@@ -13,7 +13,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ActivitiesPage from './components/ActivitiesPage';
 import DashboardCustomer from './components/DashboardCustomer';
 import DashboardAdmin from './components/DashboardAdmin';
-
+import AuditDetail from "./components/AuditDetail";
+import Notifications from './components/Notifications';
+import UpdateAudit from './components/UpdateAudit';
+import CompanyList from './components/CompanyList';
+import ProfileUpdate from './components/ProfileUpdate';
 function App() {
   return (
     <Router>
@@ -30,7 +34,12 @@ function App() {
             <Route path="/contact" element={<Contact />} />  
             <Route path="/audits" element={<ProtectedRoute> <ActivitiesPage /> </ProtectedRoute> } /> 
             <Route path="/customer/dashboard" element={<DashboardCustomer />} />
-            <Route path="/admin/dashboard" element={<DashboardAdmin />} />           
+            <Route path="/admin/dashboard" element={<DashboardAdmin />} />    
+            <Route path="/audit/:id" element={<AuditDetail />} />
+            <Route path="/admin/notifications" element={<Notifications />} />
+            <Route path="/admin/update-audit" element={<UpdateAudit />} />
+            <Route path="/admin/companies" element={<CompanyList />} />
+            <Route path="/admin/profile" element={<ProfileUpdate />} />       
           </Routes>
         </div>
       </div>

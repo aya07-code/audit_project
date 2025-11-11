@@ -7,59 +7,30 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function averagePayment()
     {
-        //
+        $average = Payment::avg('amount'); 
+        $average = round($average, 2);
+
+        return response()->json([
+            'average_payment' => $average
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function revenueByMonth()
     {
-        //
+        $revenue = Payment::selectRaw('MONTH(COALESCE(date, created_at)) as month, SUM(amount) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'month' => date('F', mktime(0, 0, 0, $row->month, 1)), // ex: "November"
+                    'total' => $row->total,
+                ];
+            });
+
+        return response()->json($revenue);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Payment $payment)
-    {
-        //
-    }
 }

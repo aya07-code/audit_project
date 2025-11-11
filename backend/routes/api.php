@@ -10,6 +10,8 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PaymentController;
 
 /*Routes publiques*/
 Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -45,8 +47,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/reports/audits/{auditId}/customer/{customerId}', [AuditController::class, 'generateAuditReport']);
         // Route pour récupérer les détails d'un audit pour une compagnie spécifique
         Route::get('companies/{companyId}/audits/{auditId}', [AuditController::class, 'auditDetailsForCompanyAudit']);
-        //dashboard admin
-        Route::get('/admin/dashboard/summary', [UserController::class, 'dashboardSummary']);
+        // Résumé du dashboard
+        Route::get('/admin/dashboard/summary', [AdminController::class, 'dashboardSummary']);
+        // Analytics pour les graphiques
+        Route::get('/admin/dashboard/analytics', [AdminController::class, 'analytics']);
+        // Route pour la moyenne des paiements
+        Route::get('/payments/average', [PaymentController::class, 'averagePayment']);
+        // Route pour les revenus par mois
+        Route::get('/payments/revenue-by-month', [PaymentController::class, 'revenueByMonth']);
+        // Route pour le résumé des audits
+        Route::get('/dashboard/summary', [AuditController::class, 'summary']);
 
     });
 
@@ -63,7 +73,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/answers/audit/{audit_id}', [AnswerController::class, 'submitAnswers']);
         //dashboard client
         Route::get('/client/dashboard/summary', [UserController::class, 'clientDashboardSummary']);
-
     });
 
 /*Routes partagées entre admin et client*/
@@ -73,5 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/audits', [AuditController::class, 'index']); 
     //Route pour lister tout les audits d'une activité spécifique
     Route::get('/audits/activities/{activityId}', [AuditController::class, 'auditsForActivity']);
+    // Route pour récupérer un audit spécifique
+    Route::get('/audits/{id}', [AuditController::class, 'show']);
 
 });

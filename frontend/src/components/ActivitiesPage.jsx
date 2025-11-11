@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Footer1 from "./Footer1";
 import { apiGet } from "../utils/api";
 import "../styles/Activities.css";
@@ -9,6 +10,7 @@ const ActivitiesPage = () => {
   const [selectedAudits, setSelectedAudits] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const auditsPerPage = 8;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -106,7 +108,7 @@ const ActivitiesPage = () => {
           <p>No audits found</p>
         ) : (
           currentAudits.map((audit) => (
-            <div key={audit.id} className="audit-card">
+            <div key={audit.id} className="audit-card" onClick={() => navigate(`/audit/${audit.id}`)}>
               <img
                 src={audit.image || "https://via.placeholder.com/300x150"}
                 alt={audit.title}

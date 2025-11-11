@@ -9,7 +9,12 @@ use App\Models\Answer;
 use App\Models\User;
 use App\Models\Question;
 use App\Models\Customer;
+use App\Models\Activity;
+use App\Models\AuditCompany;
+use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class AuditController extends Controller
 {
@@ -236,32 +241,74 @@ class AuditController extends Controller
         return response()->json($result);
     }
 
+    public function show($id)
+    {
+        $audit = Audit::select('id', 'title', 'date', 'score', 'description', 'image', 'updated_at', 'created_at')
+            ->find($id);
+
+        if (! $audit) {
+            return response()->json(['message' => 'Audit non trouvé'], 404);
+        }
+        $audit->load('activities:id,name');
+
+        return response()->json($audit);
+    }
+
+    public function summary()
+    {
+        $audits_count = Audit::count();
+        $companies_count = Company::count();
+        $average_audit_score = round(Audit::avg('score'), 1);
+        $revenue_this_month = Payment::whereMonth('created_at', now()->month)
+                                    ->sum('amount');
+
+        // 📅 Audits par mois
+        $audits_by_month = AuditCompany::whereNotNull('date')
+            ->select(
+                DB::raw('MONTH(date) as month'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'month' => date('F', mktime(0, 0, 0, $row->month, 1)),
+                    'total' => $row->total,
+                ];
+            });
+
+        // 💰 Revenus par mois
+        $revenue_by_month = Payment::select(
+            DB::raw('MONTH(date) as month'),
+            DB::raw('SUM(amount) as total')
+        )
+        ->groupBy('month')
+        ->orderBy('month')
+        ->get()
+        ->map(function ($row) {
+            return [
+                'month' => date('F', mktime(0, 0, 0, $row->month, 1)),
+                'total' => $row->total,
+            ];
+        });
+
+        // 📊 Audits par activité
+        $audits_by_activity = Activity::select('name')
+            ->withCount('audits')
+            ->get()
+            ->map(fn($a) => ['name' => $a->name, 'value' => $a->audits_count]);
+
+        return response()->json([
+            'audits_count' => $audits_count,
+            'companies_count' => $companies_count,
+            'average_audit_score' => $average_audit_score,
+            'revenue_this_month' => $revenue_this_month,
+            'audits_by_month' => $audits_by_month,
+            'revenue_by_month' => $revenue_by_month,
+            'audits_by_activity' => $audits_by_activity,
+        ]);
+    }
 
 
-
-    public function create()
-    {
-        //
-    }
-    public function store(Request $request)
-    {
-        //
-    }
-
-    public function show(Audit $audit)
-    {
-        //
-    }
-    public function edit(Audit $audit)
-    {
-        //
-    }
-    public function update(Request $request, Audit $audit)
-    {
-        //
-    }
-    public function destroy(Audit $audit)
-    {
-        //
-    }
 }

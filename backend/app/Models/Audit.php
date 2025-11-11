@@ -30,4 +30,9 @@ class Audit extends Model
     {
         return $this->belongsToMany(Activity::class, 'activity_audit');
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }
