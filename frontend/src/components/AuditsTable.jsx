@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faEye, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faClipboardList,faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 const AuditsTable = () => {
   const [audits, setAudits] = useState([]);
@@ -112,12 +113,10 @@ const AuditsTable = () => {
   };
 
   return (
-    <div className="p-3 bg-gray-100 min-h-screen">
-      <div className="bg-white rounded-lg shadow p-6">
-        <h1 className="text-2xl font-bold mb-6 text-slate-500">
+      <div className="p-4 bg-white shadow-md rounded-lg my-8">
+        <h2 className="text-2xl font-bold mb-6 text-slate-500">
           Liste des Audits
-        </h1>
-
+        </h2>
         {/* 🔸 Formulaire d’édition affiché au-dessus du tableau */}
         {editingAudit && (
           <div className="mb-6 border border-blue-200 rounded-lg p-4 bg-blue-50">
@@ -173,15 +172,15 @@ const AuditsTable = () => {
         {/* 🔸 Tableau des audits */}
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200">
-            <thead className="bg-blue-50">
+            <thead className="bg-blue-50 text-blue-900 text-left">
               <tr>
-                <th className="py-3 px-4 text-left font-medium text-blue-900">
-                  Titre
+                <th className="py-3 px-4 text-left ">
+                   <FontAwesomeIcon icon={faClipboardList} className="text-gray-500 mr-2" />Titre
                 </th>
-                <th className="py-3 px-4 text-left font-medium text-blue-900">
-                  Description
+                <th className="py-3 px-4 text-left ">
+                  <FontAwesomeIcon icon={faInfoCircle} className="text-gray-500 mr-2 mt-1" />Description
                 </th>
-                <th className="py-3 px-4 text-center font-medium text-blue-900">
+                <th className="py-3 px-4 text-center ">
                   Actions
                 </th>
               </tr>
@@ -220,7 +219,6 @@ const AuditsTable = () => {
           </table>
         </div>
       </div>
-    </div>
   );
 };
 

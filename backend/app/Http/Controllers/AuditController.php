@@ -15,17 +15,14 @@ use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-
 class AuditController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $audits = Audit::all();
         return response()->json($audits);
     }
+
     // function pour les audits d'une entreprise spécifique
     public function auditsForCompany(int $companyId) 
     {
@@ -37,6 +34,7 @@ class AuditController extends Controller
 
         return response()->json($audits);
     }
+
     // function pour les audits d'une activité spécifique 
     public function auditsForActivity(int $activityId)
     {
@@ -48,6 +46,7 @@ class AuditController extends Controller
 
         return response()->json($audits);
     }
+
     // function pour récupérer les audits pour utilisateur connecté
     public function clientAudits(Request $request)
     {
@@ -65,6 +64,77 @@ class AuditController extends Controller
             ->get();
 
         return response()->json($audits);
+    }
+
+    // clientAuditDetails : on retourne aussi submitted (is_submitted) pour chaque audit-company
+    public function clientAuditDetails(Request $request)
+    { 
+        $user = $request->user();
+        $company = Company::where('owner_id', $user->id)->first();
+
+        if (! $company) {
+            return response()->json(['message' => 'Entreprise non trouvée'], 404);
+        }
+
+        $audits = Audit::whereHas('companies', function($q) use ($company) {
+                $q->where('companies.id', $company->id);
+            })
+            ->with([
+                'questions' => function ($q) {
+                    $q->orderBy('id');
+                },
+                // charger toutes les réponses, on filtrera par user dans le mapping
+                'questions.answers' => function($query) use ($user) {
+                    $query->where('customer_id', $user->id);
+                }
+            ])
+            ->get(); 
+
+        $result = $audits->map(function ($audit) use ($company, $user) {
+
+            $pivot = DB::table('audit_company')
+                ->where('audit_id', $audit->id)
+                ->where('company_id', $company->id)
+                ->first();
+
+            $score = $pivot->score ?? 0;
+            $pivotDate = $pivot->date ?? $audit->created_at;
+            $isSubmitted = (bool) ($pivot->is_submitted ?? false);
+
+            $questions = $audit->questions->map(function ($question) use ($user) {
+                // answers relation already filtered for the user by with(), but to be safe:
+                $answer = $question->answers->where('customer_id', $user->id)->first();
+
+                return [
+                    'id' => $question->id,
+                    'text' => $question->text,
+                    'answer' => $answer ? [
+                        'id' => $answer->id,
+                        'choice' => $answer->choice,
+                        'justification' => $answer->justification
+                    ] : null
+                ]; 
+            });
+
+            return [
+                'id' => $audit->id,
+                'title' => $audit->title,
+                'description' => $audit->description,
+                'date' => $pivotDate,
+                'status' => $questions->whereNotNull('answer')->count() === 0
+                    ? 'pending'
+                    : ($questions->whereNotNull('answer')->count() < $questions->count()
+                        ? 'in_progress'
+                        : 'completed'),
+                'score' => $score,
+                'submitted' => $isSubmitted,        // <-- added flag
+                'total_questions' => $questions->count(),
+                'answered_count' => $questions->whereNotNull('answer')->count(),
+                'questions' => $questions
+            ];
+        });
+
+        return response()->json($result);
     }
 
     // function pour générer le rapport PDF avec scores et question avec leur réponses pour un audit spécifique pour un client spécifique
@@ -134,6 +204,7 @@ class AuditController extends Controller
             ], 500);
         }
     }
+    
     // function pour récupérer les détails d'un audit spécifique pour une entreprise spécifique, y compris les questions et les réponses du owner (client)
     public function auditDetailsForCompanyAudit(int $companyId, int $auditId)
     {
@@ -185,62 +256,6 @@ class AuditController extends Controller
         ]);
     }
 
-    // function pour récupérer les audits pour utilisateur connecté (historique + statut + score)
-    public function clientAuditDetails(Request $request)
-    {
-        $user = $request->user();
-
-        // récupérer la company liée à ce user (owner_id dans companies)
-        $company = Company::where('owner_id', $user->id)->first();
-        if (! $company) {
-            return response()->json(['message' => 'Entreprise non trouvée pour cet utilisateur'], 404);
-        }
-
-        // récupérer audits associés à la company avec questions
-        $audits = Audit::whereHas('companies', function($q) use ($company) {
-                $q->where('companies.id', $company->id);
-            })
-            ->with('questions') // besoin du nombre de questions
-            ->get();
-
-        $result = $audits->map(function($audit) use ($user) {
-            $questionsCount = $audit->questions->count();
-
-            $answers = Answer::where('audit_id', $audit->id)
-                ->where('customer_id', $user->id)
-                ->get();
-
-            // statut : pending / in_progress / completed
-            if ($answers->isEmpty()) {
-                $status = 'pending';
-            } elseif ($answers->count() < $questionsCount) {
-                $status = 'in_progress';
-            } else {
-                $status = 'completed';
-            }
-
-            // calcul simple de score : % de "Oui" sur le total des questions (arrondie)
-            $score = null;
-            if ($questionsCount > 0 && $answers->isNotEmpty()) {
-                $yesCount = $answers->where('choice', 'Oui')->count();
-                $score = round(($yesCount / $questionsCount) * 100, 2);
-            }
-
-            return [
-                'id' => $audit->id,
-                'title' => $audit->title,
-                'date' => $audit->date,
-                'total_questions' => $questionsCount,
-                'answered_count' => $answers->count(),
-                'status' => $status,
-                'score' => $score, // pour cet utilisateur
-                'description' => $audit->description ?? null,
-            ];
-        });
-
-        return response()->json($result);
-    }
-
     public function show($id)
     {
         $audit = Audit::select('id', 'title', 'date', 'score', 'description', 'image', 'updated_at', 'created_at')
@@ -258,8 +273,11 @@ class AuditController extends Controller
     {
         $audits_count = Audit::count();
         $companies_count = Company::count();
-        $average_audit_score = round(Audit::avg('score'), 1);
-        $revenue_this_month = Payment::whereMonth('created_at', now()->month)
+        $average_audit_score = round(
+            AuditCompany::whereNotNull('score')->avg('score'),
+            1
+        );
+        $revenue_this_month = Payment::whereMonth('date', now()->month)
                                     ->sum('amount');
 
         // 📅 Audits par mois
@@ -330,8 +348,4 @@ class AuditController extends Controller
             'audit' => $audit,
         ]);
     }
-
-
-
-
 }

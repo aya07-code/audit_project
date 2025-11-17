@@ -13,6 +13,7 @@ class AuditCompany extends Model
         'audit_id',
         'company_id',
         'date',
+        'score'
     ];
     public function audit()
     {

@@ -9,7 +9,7 @@ class Answer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['question_id', 'audit_id', 'customer_id', 'choice', 'text' , 'justification'];
+    protected $fillable = ['question_id', 'audit_id', 'customer_id', 'choice', 'justification'];
 
     public function question()
     {
@@ -19,5 +19,10 @@ class Answer extends Model
     public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id'); 
+    }
+
+    public function audit()
+    {
+        return $this->belongsTo(Audit::class , 'audit_id');
     }
 }

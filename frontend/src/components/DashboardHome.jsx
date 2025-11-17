@@ -93,7 +93,7 @@ const DashboardAdmin = () => {
 
   return (
     <div className="p-2 bg-gray-100 min-h-screen ">
-      <h1 className="text-3xl font-bold mb-8 text-slate-500">📊 Tableau de bord Admin</h1>
+      <h1 className="text-3xl font-bold mb-8 text-slate-500 mt-6">📊 Tableau de bord Admin</h1>
 
       {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">

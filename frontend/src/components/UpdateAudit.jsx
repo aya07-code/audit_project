@@ -1,6 +1,6 @@
 import React from "react";
 import SidebarAdmin from "./SidebarAdmin";
-import SidebarDash from "./SidebarDash";
+import Sidebar from "./Sidebar";
 import AuditsTable from "./AuditsTable";
 import "../styles/DashboardAdmin.css";
 
@@ -8,7 +8,7 @@ import "../styles/DashboardAdmin.css";
 const UpdateAudit = () => {
   return (
     <div className="admin-dashboard">
-      <SidebarDash />
+      <Sidebar />
       <SidebarAdmin />
       <main className="admin-content">
         <AuditsTable />

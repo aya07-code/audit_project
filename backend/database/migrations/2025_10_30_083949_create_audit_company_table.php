@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('audit_id')->constrained('audits')->cascadeOnDelete();
             $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
+            $table->float('score')->nullable();
+            $table->date('date')->nullable(); 
             $table->timestamps();
         });
     }

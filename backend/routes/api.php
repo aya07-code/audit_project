@@ -16,23 +16,39 @@ use App\Http\Controllers\PaymentController;
 /*Routes publiques*/
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+    //Route por lister tout les activity 
+    Route::get('/activities', [ActivityController::class, 'index']);
+    //Route por lister tout les audits 
+    Route::get('/audits', [AuditController::class, 'index']);
+    //Route pour lister tout les audits d'une activité spécifique
+    Route::get('/audits/activities/{activityId}', [AuditController::class, 'auditsForActivity']);
+    // Route pour récupérer un audit spécifique
+    Route::get('/audits/{id}', [AuditController::class, 'show']);
 
 /*Routes protégées (nécessitent un token)*/
 Route::middleware('auth:sanctum')->group(function () {
     // Déconnexion
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
     // Infos utilisateur connecté
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    Route::get('/user', function (Request $request) { return $request->user(); });
+    //Routes gestion des compagnies 
+    Route::apiResource('/companies', CompanyController::class);
+    //Routes gestion profil utilisateur connecté
+    Route::put('/user/profile', [UserController::class, 'updateProfile']);
+    Route::put('/user/password', [UserController::class, 'updatePassword']);
+    // Route pour récupérer les reponse des questions d'un audit pour customer spécifique
+    Route::get('/responses/audits/{auditId}/customer/{customerId}', [AnswerController::class, 'responsesForAuditAndUser']);
+    // Route pour modifier une réponse spécifique
+    Route::put('/answers/{answerId}', [AnswerController::class, 'updateAnswer']);
+    // Update / create une réponse et renvoie le nouveau score
+    Route::post('/answers/audit/{auditId}', [AnswerController::class, 'updateOrCreateAnswer']);
+    Route::post('/answers/submit/{auditId}', [AnswerController::class, 'submitAnswers']);
+    Route::post('/answers/audit/{auditId}/save-all', [AnswerController::class, 'saveAll']);
+
 /*Routes pour les administrateurs*/
     Route::middleware('admin')->group(function () {
         //Routes gestion des clients
         Route::apiResource('customers', UserController::class);
-        //Route pour lister toutes les compagnies avec le nom de owner ,le nom de l’activité, l’email et la ville de leur owner
-        Route::get('/companies', [CompanyController::class, 'index']); 
-        // Route pour supprimer compagnie
-        Route::delete('/companies/{id}', [CompanyController::class, 'destroy']);
         // Route pour récupérer les audits pour company spécifique 
         Route::get('/audits/company/{companyId}', [AuditController::class, 'auditsForCompany']);
         //Routes récupérer tout questions d'une audit spécifique 
@@ -43,8 +59,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/questions/audits/{auditId}/questions/{questionId}', [QuestionController::class, 'updateQuestionInAudit']);
         // Route pour supprimer une question à un audit spécifique
         Route::delete('/questions/audits/{auditId}/questions/{questionId}', [QuestionController::class, 'destroyQuestionFromAudit']);
-        // Route pour récupérer les reponse des questions d'un audit pour customer spécifique
-        Route::get('/responses/audits/{auditId}/customer/{customerId}', [AnswerController::class, 'responsesForAuditAndUser']);
         // Route pour générer le rapport PDF avec scores et question avec leur réponses pour un audit spécifique pour un client spécifique
         Route::get('/reports/audits/{auditId}/customer/{customerId}', [AuditController::class, 'generateAuditReport']);
         // Route pour récupérer les détails d'un audit pour une compagnie spécifique
@@ -64,31 +78,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
-
 /*Routes pour les clients*/
     Route::middleware('customer')->group(function () {
         // Route pour récupérer les audits pour utilisateur connecté
         Route::get('/client/audits', [AuditController::class, 'clientAudits']);
-        // Route pour récupérer les audits pour utilisateur connecté (historique + statut + score)
-        Route::get('/client/détails/audits', [AuditController::class, 'clientAuditDetails']);
         // Route pour récupérer les questions d'un audit  pour utilisateur connecté
         Route::get('/questions/audit/{auditId}', [QuestionController::class, 'clientQuestions']);
-        // Route pour soumettre les réponses d'un audit pour utilisateur connecté
-        Route::post('/answers/audit/{audit_id}', [AnswerController::class, 'submitAnswers']);
+        // Route pour récupérer les audits pour utilisateur connecté (historique + statut + score)
+        Route::get('/client/détails/audits', [AuditController::class, 'clientAuditDetails']);
         //dashboard client
-        Route::get('/client/dashboard/summary', [UserController::class, 'clientDashboardSummary']);
+        Route::get('/customer/dashboard', [UserController::class, 'CustomerDashboard']);
+        // info de company de customer connecter 
+        Route::get('/customer/company-info', [CompanyController::class, 'customerCompanyInfo']);
+
     });
-
-/*Routes partagées entre admin et client*/
-    //Route por lister tout les activity 
-    Route::get('/activities', [ActivityController::class, 'index']);
-    //Route por lister tout les audits 
-    Route::get('/audits', [AuditController::class, 'index']);
-    //Route pour lister tout les audits d'une activité spécifique
-    Route::get('/audits/activities/{activityId}', [AuditController::class, 'auditsForActivity']);
-    // Route pour récupérer un audit spécifique
-    Route::get('/audits/{id}', [AuditController::class, 'show']);
-
-    
 
 });

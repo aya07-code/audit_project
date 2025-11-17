@@ -9,7 +9,7 @@ class Audit extends Model
 {
    use HasFactory;
 
-    protected $fillable = ['title', 'company_id', 'date', 'score', 'description', 'image'];
+    protected $fillable = ['title', 'company_id', 'date', 'description', 'image'];
 
     public function companies()
     {
@@ -34,5 +34,10 @@ class Audit extends Model
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(Answer::class);
     }
 }

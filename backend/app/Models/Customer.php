@@ -20,7 +20,7 @@ class Customer extends User
 
     public function company()
     {
-        return $this->belongsTo(Company::class , 'company_id');
+        return $this->hasOne(Company::class , 'owner_id');
     }
 
     public function admin()

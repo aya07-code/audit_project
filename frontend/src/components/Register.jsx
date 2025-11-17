@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdPerson, MdEmail, MdLock, MdPhone, MdLocationCity, MdHome } from 'react-icons/md';
 import '../styles/Register.css';
+import Sidebar from "./Sidebar";
 import axios from 'axios';
 import Footer1 from './Footer1';
 
@@ -68,6 +69,7 @@ const Register = () => {
 
     return (
       <div>
+        <Sidebar />
         <div className="auth-container1">
             <div className="auth-box1">
                 <h2>Create Account</h2>

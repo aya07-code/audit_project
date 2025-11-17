@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdEmail, MdLock } from 'react-icons/md';
+import Sidebar from "./Sidebar";
 import '../styles/Login.css';
 import { apiPost } from '../utils/api';
 import Footer1 from './Footer1';
@@ -47,6 +48,7 @@ const Login = () => {
     };
     return (
       <div>
+        <Sidebar />
         <div className="auth-container">
             <div className="auth-box">
                 <h2>Welcome Back</h2>

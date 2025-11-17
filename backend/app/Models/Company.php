@@ -23,7 +23,7 @@ class Company extends Model
 
     public function audits()
     {
-        return $this->belongsToMany(Audit::class, 'audit_company');
+        return $this->belongsToMany(Audit::class, 'audit_company')->withPivot('score');
     }
    
 }

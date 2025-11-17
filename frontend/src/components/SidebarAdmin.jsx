@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaHome, FaBell, FaPlus, FaBuilding, FaUserEdit, FaSignOutAlt } from "react-icons/fa";
+import { FaHome, FaBell, FaPlus, FaBuilding, FaUserEdit, FaSignOutAlt,FaUser } from "react-icons/fa";
 import "../styles/SidebarAdmin.css";
 
 const SidebarAdmin = () => {
@@ -9,7 +9,7 @@ const SidebarAdmin = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -26,6 +26,9 @@ const SidebarAdmin = () => {
         </NavLink>
         <NavLink to="/admin/companies" className="sidebar-link">
           <FaBuilding /> Companies
+        </NavLink>
+        <NavLink to="/admin/customers" className="sidebar-link">
+           <FaUser /> Customers
         </NavLink>
         <NavLink to="/admin/profile" className="sidebar-link">
           <FaUserEdit /> Update Profile

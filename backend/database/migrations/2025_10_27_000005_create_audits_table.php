@@ -15,7 +15,6 @@ return new class extends Migration
         $table->id();
         $table->string('title');
         $table->date('date');
-        $table->float('score')->nullable();
         $table->text('description')->nullable();
         $table->string('image')->nullable();
         $table->timestamps();
