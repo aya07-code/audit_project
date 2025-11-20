@@ -18,6 +18,9 @@ class CompanyController extends Controller
             return [
                 'id'             => $company->id, // 🔹 important
                 'company_name'   => $company->name,
+                'ICE'            =>$company->ICE,
+                'RC'             =>$company->RC,
+                'address'        =>$company->address,
                 'activity_name'  => $company->activity->name ?? null,
                 'activity_id'    => $company->activity->id ?? null, // 🔹 utile pour edit
                 'owner_name'     => $company->customer->name ?? null,
@@ -45,7 +48,12 @@ class CompanyController extends Controller
 
         return response()->json([
             'company' => [
-                'name' => $company->name,
+                'id'      => $company->id, 
+                'name'    => $company->name,
+                'ICE'     =>$company->ICE,
+                'RC'      =>$company->RC,
+                'address' =>$company->address,
+
             ],
             'customer' => [
                 'name' => $user->name,
@@ -54,6 +62,7 @@ class CompanyController extends Controller
                 'address' => $user->adress,
             ],
             'activity' => [
+                'id' => $company->activity->id ?? null,
                 'name' => $company->activity->name ?? null,
                 'description' => $company->activity->description ?? null,
             ]
@@ -77,12 +86,18 @@ class CompanyController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'activity_id' => 'required|exists:activities,id',
+            'ICE' => 'nullable|string|max:50',
+            'RC' => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:255',
         ]);
 
         $company = Company::create([
             'name' => $validated['name'],
             'activity_id' => $validated['activity_id'],
             'owner_id' => $user->id,
+            'ICE' => $validated['ICE'] ,
+            'RC' => $validated['RC'] ,
+            'address' => $validated['address'] ,
         ]);
 
         return response()->json(['message' => 'Compagnie créée avec succès', 'company' => $company], 201);
@@ -97,9 +112,11 @@ class CompanyController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'activity_id' => 'sometimes|exists:activities,id',
-            'owner_id' => 'sometimes|exists:users,id',
+            'name' => 'required|string|max:255',
+            'activity_id' => 'required|exists:activities,id',
+            'ICE' => 'nullable|string|max:50',
+            'RC' => 'nullable|string|max:50',
+            'address' => 'nullable|string|max:255',
         ]);
 
         $company->update($validated);

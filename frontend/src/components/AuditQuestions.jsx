@@ -197,7 +197,7 @@ const AuditQuestions = () => {
             onClick={() => navigate(-1)}
             className="text-gray-600 hover:text-gray-800 mr-4"
           >
-            <FontAwesomeIcon icon={faArrowLeft} /> Retour
+            <FontAwesomeIcon icon={faArrowLeft} /> Back
           </button>
           <h2 className="text-xl font-bold text-blue-900">
             {audit ? `Questions de l’audit : ${audit.title}` : "Chargement..."}
@@ -217,7 +217,7 @@ const AuditQuestions = () => {
             onClick={handleAddQuestion}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
-            <FontAwesomeIcon icon={faPlus} /> Ajouter
+            <FontAwesomeIcon icon={faPlus} /> Add
           </button>
         </div>
 
@@ -285,7 +285,7 @@ const AuditQuestions = () => {
             {questions.length === 0 && (
               <tr>
                 <td colSpan="2" className="text-center py-6 text-gray-500">
-                  Aucune question trouvée pour cet audit.
+                  No questions were found for this audit.
                 </td>
               </tr>
             )}

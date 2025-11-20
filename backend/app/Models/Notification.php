@@ -7,13 +7,7 @@ class Notification extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'text',
-        'type',
-        'is_read',
-        'user_id',
-        'audit_id'
-    ];
+    protected $fillable = [ 'text', 'type', 'is_read', 'user_id', 'audit_id', 'company_id'];
 
     public function user()
     {
@@ -23,5 +17,10 @@ class Notification extends Model
     public function audit()
     {
         return $this->belongsTo(Audit::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }

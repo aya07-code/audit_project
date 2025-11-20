@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faClipboardList,faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FaClipboardList  } from "react-icons/fa";
 
 const AuditsTable = () => {
   const [audits, setAudits] = useState([]);
@@ -107,26 +108,26 @@ const AuditsTable = () => {
     });
   };
 
-  // 🔹 Voir les détails
+  // Voir les détails
   const handleView = (auditId) => {
     navigate(`/audits/${auditId}`);
   };
 
   return (
       <div className="p-4 bg-white shadow-md rounded-lg my-8">
-        <h2 className="text-2xl font-bold mb-6 text-slate-500">
-          Liste des Audits
+        <h2 className="text-2xl font-bold text-[#1E3A8A] mb-6 flex items-center gap-2">
+          <FaClipboardList  className="text-[#10B981]" /> List of Audits
         </h2>
         {/* 🔸 Formulaire d’édition affiché au-dessus du tableau */}
         {editingAudit && (
           <div className="mb-6 border border-blue-200 rounded-lg p-4 bg-blue-50">
             <h2 className="text-lg font-semibold text-blue-900 mb-3">
-              Modifier l’audit
+              Edit audit
             </h2>
             <form onSubmit={handleUpdate} className="space-y-3">
               <div>
                 <label className="block font-medium text-gray-700">
-                  Titre :
+                  Title:
                 </label>
                 <input
                   type="text"
@@ -156,13 +157,13 @@ const AuditsTable = () => {
                   className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 flex items-center"
                 >
                   <FontAwesomeIcon icon={faTimes} className="mr-2" />
-                  Annuler
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
-                  Enregistrer
+                  Save
                 </button>
               </div>
             </form>
@@ -175,7 +176,7 @@ const AuditsTable = () => {
             <thead className="bg-blue-50 text-blue-900 text-left">
               <tr>
                 <th className="py-3 px-4 text-left ">
-                   <FontAwesomeIcon icon={faClipboardList} className="text-gray-500 mr-2" />Titre
+                   <FontAwesomeIcon icon={faClipboardList} className="text-gray-500 mr-2" />Title
                 </th>
                 <th className="py-3 px-4 text-left ">
                   <FontAwesomeIcon icon={faInfoCircle} className="text-gray-500 mr-2 mt-1" />Description
@@ -211,7 +212,7 @@ const AuditsTable = () => {
               {audits.length === 0 && (
                 <tr>
                   <td colSpan="4" className="text-center py-6 text-gray-500">
-                    Aucun audit trouvé.
+                    No audits found.
                   </td>
                 </tr>
               )}

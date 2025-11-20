@@ -9,7 +9,7 @@ class Company extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'owner_id', 'activity_id' ];
+    protected $fillable = ['name', 'ICE','RC','address', 'owner_id', 'activity_id' ];
 
     public function customer()
     {
@@ -24,6 +24,11 @@ class Company extends Model
     public function audits()
     {
         return $this->belongsToMany(Audit::class, 'audit_company')->withPivot('score');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
    
 }

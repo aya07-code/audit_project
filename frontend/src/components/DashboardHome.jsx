@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TrendingUp, Building2, PieChart, DollarSign, Loader } from "lucide-react";
+import { FaTachometerAlt } from "react-icons/fa";
 import {
   ResponsiveContainer,
   BarChart,
@@ -93,7 +94,9 @@ const DashboardAdmin = () => {
 
   return (
     <div className="p-2 bg-gray-100 min-h-screen ">
-      <h1 className="text-3xl font-bold mb-8 text-slate-500 mt-6">📊 Tableau de bord Admin</h1>
+      <h1 className="text-3xl font-bold mb-8 text-[#1E3A8A] mt-6 flex gap-2"><FaTachometerAlt className="text-[#10B981]" /> 
+      Admin Dashboard
+      </h1>
 
       {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -115,7 +118,7 @@ const DashboardAdmin = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 flex justify-center">
         {/* Audits par mois */}
         <div className="bg-white p-6 rounded-2xl shadow-lg">
-          <h2 className="font-semibold mb-4">📅 Audits par mois</h2>
+          <h2 className="font-semibold mb-4">📅 Audits per month</h2>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={summary.auditsByMonth}>
               <XAxis  dataKey="month"     
@@ -133,7 +136,7 @@ const DashboardAdmin = () => {
 
         {/* Camembert activités */}
         <div className="bg-white p-6 rounded-2xl shadow-lg ">
-          <h2 className="font-semibold mb-4">📈 Répartition des audits par activité</h2>
+          <h2 className="font-semibold mb-4">📈 Breakdown of audits by activity</h2>
           <ResponsiveContainer width="100%" height={310}>
             <Pie>
               <PieSlice
@@ -155,7 +158,7 @@ const DashboardAdmin = () => {
 
         {/* Revenus mensuels */}
         <div className="bg-white p-6 rounded-2xl shadow-lg w-[600px] mx-auto col-span-2">
-          <h2 className="font-semibold mb-4 ">💰 Revenus mensuels</h2>
+          <h2 className="font-semibold mb-4 ">💰 Monthly income</h2>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={summary.revenueByMonth}>
               <XAxis

@@ -1,6 +1,7 @@
 import React from "react";
 import SidebarCustomer from "./SidebarCustomer";  
 import Sidebar from "./Sidebar";
+import NotificationsC from "./NotificationsC";
 import "../styles/DashboardCustomer.css";
 
 const NotificationsCustomer = () => {
@@ -9,7 +10,7 @@ const NotificationsCustomer = () => {
       <Sidebar />
       <SidebarCustomer />
       <main className="customer-content">
-        
+        <NotificationsC />
       </main>
     </div>
   );

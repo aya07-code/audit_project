@@ -13,7 +13,7 @@ class AnswerController extends Controller
 {
     //fonction pour récupérer les réponses des questions d'un audit spécifique pour un utilisateur spécifique
     public function responsesForAuditAndUser(int $auditId, int $customerId)
-        {
+    {
             $answers = Answer::with('question')
                 ->where('audit_id', $auditId)
                 ->where('customer_id', $customerId)
@@ -35,7 +35,8 @@ class AnswerController extends Controller
                 });
 
             return response()->json($answers);
-        }
+    }
+
     // Mettre à jour une réponse spécifique
     public function updateAnswer(Request $request, $answerId)
     {
@@ -80,7 +81,7 @@ class AnswerController extends Controller
         ]);
     }
     public function updateOrCreateAnswer(Request $request, $auditId)
-        {
+    {
             $user = $request->user();
 
             $validated = $request->validate([
@@ -125,7 +126,8 @@ class AnswerController extends Controller
                 'answer' => $answer,
                 'new_score' => $newScore,
             ]);
-        }
+    }
+
     // Soumettre toutes les réponses et mettre is_submitted = true
     public function submitAnswers(Request $request, $auditId)
     {
@@ -169,13 +171,18 @@ class AnswerController extends Controller
         DB::table('audit_company')
             ->where('audit_id', $auditId)
             ->where('company_id', $companyId)
-            ->update(['score' => $finalScore, 'is_submitted' => true]);
+            ->update(['score' => $finalScore, 'is_submitted' => true
+        ]);
+        // 🔥 إرسال إشعار للأدمن
+        app(\App\Http\Controllers\NotificationController::class)
+            ->notifyAuditSubmission($auditId, $companyId);
 
         return response()->json([
             'message' => 'Audit soumis avec succès',
             'final_score' => $finalScore,
         ]);
     }
+
     public function saveAll(Request $request, $auditId)
     {
         $user = $request->user();
@@ -226,5 +233,61 @@ class AnswerController extends Controller
             'score' => $score
         ]);
     }
+
+
+    public function updateOrCreate(Request $request, $auditId)
+    {
+        $user = $request->user(); // المستخدم اللي مسجل الدخول
+
+        // Validation
+        $validated = $request->validate([
+            'question_id' => 'required|exists:questions,id',
+            'choice' => 'required|in:Oui,Non,N/A',
+            'justification' => 'nullable|string',
+        ]);
+
+        // تحديد customer الصحيح المرتبط بالcompany
+        $companyId = Company::where('owner_id', $user->id)->value('id'); 
+        $customerId = $request->customer_id ?? Company::find($companyId)->owner_id;
+
+        // UpdateOrCreate answer
+        $answer = Answer::updateOrCreate(
+            [
+                'audit_id' => $auditId,
+                'question_id' => $validated['question_id'],
+                'customer_id' => $customerId
+            ],
+            [
+                'choice' => $validated['choice'],
+                'justification' => $validated['justification'],
+            ]
+        );
+
+        // Recalculer le score pour le customer
+        $ouiCount = Answer::where('audit_id', $auditId)
+            ->where('customer_id', $customerId)
+            ->where('choice', 'Oui')
+            ->count();
+
+        $total = Answer::where('audit_id', $auditId)
+            ->where('customer_id', $customerId)
+            ->count();
+
+        $newScore = $total > 0 ? round(($ouiCount / $total) * 100) : 0;
+
+        // Mettre à jour le score dans pivot audit_company
+        DB::table('audit_company')
+            ->where('audit_id', $auditId)
+            ->where('company_id', $companyId)
+            ->update(['score' => $newScore]);
+
+        return response()->json([
+            'message' => 'Réponse enregistrée',
+            'answer' => $answer,
+            'new_score' => $newScore,
+        ]);
+    }
+
+
 
 }

@@ -2,9 +2,11 @@
 import React, { useState } from "react";
 import Slider from "react-slick";
 import "../styles/Hero.css";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
   const [focused, setFocused] = useState(null);
+   const navigate = useNavigate();
 
   const images = [
     "/img/1.jpg",
@@ -48,7 +50,7 @@ const Hero = () => {
                 <p>
                 We help businesses achieve compliance with international standards such as 
                 SMETA, BSCI, SA8000, WRAP, and ISO 9001.</p>
-                <button>Découvrir</button>
+                <button  onClick={() => navigate("/audits")}>Découvrir</button>
               </div>
             </div>
           </div>

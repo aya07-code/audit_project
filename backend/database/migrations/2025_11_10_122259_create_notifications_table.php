@@ -10,10 +10,11 @@ return new class extends Migration {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->string('text');
-            $table->string('type')->default('info'); // 'audit_completed', 'admin_reply', etc.
+            $table->string('type')->default('info'); 
             $table->boolean('is_read')->default(false);
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // destinataire de la notif
-            $table->foreignId('audit_id')->nullable()->constrained()->onDelete('cascade'); // optionnel
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
+            $table->foreignId('audit_id')->nullable()->constrained()->onDelete('cascade'); 
+            $table->foreignId('company_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

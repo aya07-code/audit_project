@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('audit_id')->constrained('audits')->cascadeOnDelete();
             $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
             $table->float('score')->nullable();
+            $table->boolean('is_submitted')->default(false);
             $table->date('date')->nullable(); 
             $table->timestamps();
         });

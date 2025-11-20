@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
         $table->id();
         $table->string('name');
+        $table->string('ICE')->nullable();
+        $table->string('RC')->nullable();
+        $table->string('address')->nullable();
         $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
         $table->foreignId('activity_id')->constrained('activities')->cascadeOnDelete();
         $table->timestamps();

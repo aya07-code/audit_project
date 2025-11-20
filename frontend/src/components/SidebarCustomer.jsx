@@ -25,7 +25,7 @@ const SidebarCustomer = () => {
           <FaPlus /> Audits
         </NavLink>
         <NavLink to="/customer/companie" className="sidebar-linkC">
-          <FaBuilding /> Companie
+          <FaBuilding /> Company
         </NavLink>
         <NavLink to="/customer/profile" className="sidebar-linkC">
           <FaUserEdit /> Update Profile

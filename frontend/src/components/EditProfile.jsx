@@ -52,8 +52,8 @@ export default function EditProfile() {
         { label: "Name", icon: <FaUser />, name: "name" },
         { label: "Email", icon: <FaEnvelope />, name: "email" },
         { label: "Phone", icon: <FaPhone />, name: "phone" },
-        { label: "Adress", icon: <FaMapMarkerAlt />, name: "adress" },
-        { label: "Ville", icon: <FaCity />, name: "ville" },
+        { label: "Address", icon: <FaMapMarkerAlt />, name: "adress" },
+        { label: "City", icon: <FaCity />, name: "ville" },
       ].map((field, i) => (
         <div key={i}>
           <label className="block text-gray-700 mb-1">{field.label}</label>

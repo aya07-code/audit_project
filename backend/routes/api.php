@@ -12,6 +12,7 @@ use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\NotificationController;
 
 /*Routes publiques*/
 Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -44,6 +45,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/answers/audit/{auditId}', [AnswerController::class, 'updateOrCreateAnswer']);
     Route::post('/answers/submit/{auditId}', [AnswerController::class, 'submitAnswers']);
     Route::post('/answers/audit/{auditId}/save-all', [AnswerController::class, 'saveAll']);
+    Route::get('/notifications/user', [NotificationController::class, 'getUserNotifications']);
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/audit-submission/{auditId}/{companyId}', [NotificationController::class, 'notifyAuditSubmission']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+    // Route pour récupérer les audits pour utilisateur connecté (historique + statut + score)
+    Route::get('/client/détails/audits', [AuditController::class, 'clientAuditDetails']);
+    Route::post('/answers/update-or-create/{auditId}', [AnswerController::class, 'updateOrCreate']);
+
+
 
 /*Routes pour les administrateurs*/
     Route::middleware('admin')->group(function () {
@@ -75,6 +86,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard/summary', [AuditController::class, 'summary']);
         // Route pour mettre à jour un audit
         Route::put('/audits/{id}', [AuditController::class, 'update']);
+        // routes/api.php
+        Route::get('/client/audit/{audit}/{company}', [AuditController::class, 'clientAuditById']);
 
     });
 
@@ -84,8 +97,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/client/audits', [AuditController::class, 'clientAudits']);
         // Route pour récupérer les questions d'un audit  pour utilisateur connecté
         Route::get('/questions/audit/{auditId}', [QuestionController::class, 'clientQuestions']);
-        // Route pour récupérer les audits pour utilisateur connecté (historique + statut + score)
-        Route::get('/client/détails/audits', [AuditController::class, 'clientAuditDetails']);
         //dashboard client
         Route::get('/customer/dashboard', [UserController::class, 'CustomerDashboard']);
         // info de company de customer connecter 

@@ -38,19 +38,19 @@ const AuditDetail = () => {
       </div>
 
       <div className="audit-detail-container">
-          <Link to="/audits" className="back-btn">← Retour</Link>
+          <Link to="/audits" className="back-btn">← Back</Link>
 
           <div className="audit-content">
               <p className="audit-description">{audit.description}</p>
 
               <p className="audit-full-text">
-                  International Associated is approved to carry out Traceability Audits to the EDFA (European Down and feather Asociation) Code of Conduct, the EDFA Traceability Standard and the EDFA Audit Standard. <br /> <br />
-                  The welfare of animals and proper husbandry are of vital importance to our society. This does not only apply to the actual well-being of the animals, but also to a high degree to public health, commerce, and the international competitiveness of the European economy. <br /> <br />
+                  International Associated is approved to carry out Traceability Audits to the EDFA (European Down and feather Association) Code of Conduct, the EDFA Traceability Standard and the EDFA Audit Standard.<br /> <br />
+                  The welfare of animals and proper husbandry are of vital importance to our society. This does not only apply to the actual well-being of the animals, but also to a high degree to public health, commerce, and the international competitiveness of the European economy.<br /> <br />
                   The over 90 European feather and bedding companies that have joined forces in the European Down and Feather Association (EDFA) since 1980, produce and market about 80% of the turnover volume and thus by far the largest fraction of the products sold in Europe. Ever since its establishment, the association has advocated for the gathering of down and feathers in compliance with community legislative references on animal protection. The respective legal provisions within the EC on animal husbandry and feather gathering are automatically part of its codex.
               </p>
 
               <p className="audit-update">
-                  🕒 Dernière modification :{" "}
+                  🕒 Last modification :{" "}
                   {audit.updated_at
                   ? new Date(audit.updated_at).toLocaleDateString("fr-FR")
                   : "Non disponible"}

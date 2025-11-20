@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-// Vérifie que l'utilisateur connecté est admin
+    // Vérifie que l'utilisateur connecté est admin
     private function authorizeAdmin()
     {
         $user = auth()->user();
@@ -24,7 +24,7 @@ class UserController extends Controller
         }
     }
 
-//Lister tous les clients
+    //Lister tous les clients
     public function index()
     {
         if ($response = $this->authorizeAdmin()) return $response;
@@ -44,7 +44,7 @@ class UserController extends Controller
         return response()->json($customers);
     }
 
-//Ajouter un nouveau client
+    //Ajouter un nouveau client
     public function store(Request $request)
     {
         if ($response = $this->authorizeAdmin()) return $response;
@@ -73,7 +73,7 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
-//Afficher un client spécifique
+    //Afficher un client spécifique
     public function show($id)
     {
         if ($response = $this->authorizeAdmin()) return $response;
@@ -82,7 +82,7 @@ class UserController extends Controller
         return response()->json($customer);
     }
 
-//Supprimer un client
+    //Supprimer un client
     public function destroy($id)
     {
         if ($response = $this->authorizeAdmin()) return $response;

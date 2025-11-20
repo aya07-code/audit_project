@@ -33,7 +33,7 @@ class RegisteredUserController extends Controller
                 'adress'   => $request->adress,
                 'ville'    => $request->ville,
                 'role'     => 'customer',
-                'is_active'=> true,
+                'is_active'=> false,
                 'admin_id' => 1,
                 'email_verified_at' => now(),
             ]);

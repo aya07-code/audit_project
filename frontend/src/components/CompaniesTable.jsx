@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaBuilding } from "react-icons/fa";
 import {
   faTrash,
   faBuilding,
@@ -85,39 +86,39 @@ const CompaniesTable = () => {
   if (loading) {
     return (
       <div className="text-center py-10 text-gray-600 text-lg">
-        Chargement des compagnies...
+          Loading companies...
       </div>
     );
   }
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg my-8">
-      <h2 className="text-2xl font-bold text-slate-500 mb-4 flex items-center">
-         Liste des compagnies
+      <h2 className="text-2xl font-bold text-[#1E3A8A] mb-6 flex items-center gap-2">
+        <FaBuilding className="text-[#10B981]" /> List of companies
       </h2>
 
       {companies.length === 0 ? (
         <p className="text-center text-gray-500 py-6">
-          Aucune compagnie enregistrée.
+          No registered company.
         </p>
       ) : (
         <table className="min-w-full border border-gray-200">
           <thead className="bg-blue-50 text-blue-900">
             <tr>
               <th className="py-3 px-2 text-left">
-                <FontAwesomeIcon icon={faBuilding} className="text-gray-500 ml-1" /> Compagnie
+                <FontAwesomeIcon icon={faBuilding} className="text-gray-500 ml-1" /> Company
               </th>
               <th className="py-3 px-2 text-left">
-                <FontAwesomeIcon icon={faBriefcase} className="text-gray-500 ml-1" /> Activité
+                <FontAwesomeIcon icon={faBriefcase} className="text-gray-500 ml-1" /> Activity
               </th>
               <th className="py-3 px-4 text-left">
-                <FontAwesomeIcon icon={faUser} className="text-gray-500" /> Propriétaire
+                <FontAwesomeIcon icon={faUser} className="text-gray-500" /> Owner
               </th>
               <th className="py-3 px-2 text-left">
                 <FontAwesomeIcon icon={faEnvelope} className="text-gray-500" /> Email
               </th>
               <th className="py-3 px-2 text-left">
-                <FontAwesomeIcon icon={faCity} className="text-gray-500" /> Ville
+                <FontAwesomeIcon icon={faCity} className="text-gray-500" /> City
               </th>
               <th className="py-3 px-2 text-center">
                  Actions

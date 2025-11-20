@@ -3,6 +3,7 @@ import axios from "axios";
 import { Eye, Save, Lock } from "lucide-react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { FaClipboardList  } from "react-icons/fa";
 
 
 const TableAuditC = () => {
@@ -120,13 +121,15 @@ const TableAuditC = () => {
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg my-8">
-      <h2 className="text-2xl font-bold mb-6 text-slate-500">Liste des Audits</h2>
+      <h2 className="text-2xl font-bold text-[#1E3A8A] mb-6 flex items-center gap-2">
+          <FaClipboardList  className="text-[#10B981]" /> List of Audits
+      </h2>
       <table className="min-w-full table-auto border-collapse">
         <thead className="bg-blue-50 text-blue-900 text-left">
           <tr>
-            <th className="px-4 py-2">Titre</th>
+            <th className="px-4 py-2">Title</th>
             <th className="px-4 py-2">Date</th>
-            <th className="px-4 py-2">Statut</th>
+            <th className="px-4 py-2">Status</th>
             <th className="px-4 py-2">Score</th>
             <th className="px-4 py-2 text-center">Actions</th>
           </tr>
@@ -140,9 +143,9 @@ const TableAuditC = () => {
               <td className="px-4 py-2">{audit.score}%</td>
               <td className="px-4 py-2 flex items-center space-x-3">
                 <button onClick={() => openAudit(audit)} className="flex items-center space-x-1 text-green-500 hover:text-green-700">
-                  <Eye size={18} /><span className="text-sm">Détails</span>
+                  <Eye size={18} /><span className="text-sm">Details</span>
                 </button>
-                {audit.submitted && <div className="flex items-center text-sm text-red-500"><Lock size={16} className="mr-1" /> Soumis</div>}
+                {audit.submitted && <div className="flex items-center text-sm text-red-500"><Lock size={16} className="mr-1" /> Submitted</div>}
               </td>
             </tr>
           ))}
@@ -154,9 +157,9 @@ const TableAuditC = () => {
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-lg">{selectedAudit.title} - Questions & Réponses</h3>
             <div>
-              {selectedAudit.submitted ? <span className="text-sm text-gray-500 flex items-center"><Lock size={16} className="mr-1"/> Audit verrouillé</span>
+              {selectedAudit.submitted ? <span className="text-sm text-gray-500 flex items-center"><Lock size={16} className="mr-1"/> Audit locked</span>
               // Sauvegarder les modification de custumer avant envoyer a admin dans front et backend 
-              : <button onClick={saveAllAnswers} className="font-bold text-green-600 hover:text-green-800 flex items-center"><Save size={18} /> <span className="ml-2 text-sm">sauvegarder</span></button>}
+              : <button onClick={saveAllAnswers} className="font-bold text-green-600 hover:text-green-800 flex items-center"><Save size={18} /> <span className="ml-2 text-sm">to safeguard</span></button>}
             </div>
           </div>
 
@@ -164,7 +167,7 @@ const TableAuditC = () => {
             <thead className="bg-blue-50 text-blue-900 text-left">
               <tr>
                 <th className="px-3 py-2">Question</th>
-                <th className="px-3 py-2">Réponse</th>
+                <th className="px-3 py-2">Answer</th>
                 <th className="px-3 py-2">Justification</th>
               </tr>
             </thead>
@@ -177,8 +180,8 @@ const TableAuditC = () => {
                     <td className="px-3 py-2">{q.text}</td>
                     <td className="px-3 py-2">
                       <select value={current.choice} disabled={isDisabled} onChange={e => handleAnswerChange(q.id,"choice",e.target.value)} className="border rounded px-2 py-1">
-                        <option value="Oui">Oui</option>
-                        <option value="Non">Non</option>
+                        <option value="Oui">Yes</option>
+                        <option value="Non">No</option>
                         <option value="N/A">N/A</option>
                       </select>
                     </td>
@@ -190,7 +193,7 @@ const TableAuditC = () => {
               })}
             </tbody>
           </table>
-          {!selectedAudit.submitted && <button onClick={() => handleSubmitAnswers(selectedAudit.id)} className="bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded">Envoyer les réponses</button>}
+          {!selectedAudit.submitted && <button onClick={() => handleSubmitAnswers(selectedAudit.id)} className="bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded">Submit responses</button>}
         </div>
       )}
     </div>

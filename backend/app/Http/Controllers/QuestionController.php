@@ -10,10 +10,10 @@ use App\Models\Company;
 
 class QuestionController extends Controller
 {
-//Pour Admin
-   public function index() {
-    $questions = Question::with('activities')->get();
-    return response()->json($questions);
+    //Pour Admin
+    public function index() {
+        $questions = Question::with('activities')->get();
+        return response()->json($questions);
     }
 
     public function store(Request $request) {
@@ -122,7 +122,7 @@ class QuestionController extends Controller
         $question->delete();
         return response()->json(['message' => 'Question supprimée']);
     }
-//Pour Client
+    //Pour Client
     public function clientIndex(Request $request) {
         $customer = $request->user();
         $activity_id = $customer->company->activity_id ?? null;

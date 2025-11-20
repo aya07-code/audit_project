@@ -26,7 +26,7 @@ class AuditController extends Controller
     // function pour les audits d'une entreprise spécifique
     public function auditsForCompany(int $companyId) 
     {
-        $audits = Audit::select('id', 'title', 'date', 'score', 'description', 'image', 'created_at', 'updated_at')
+        $audits = Audit::select('id', 'title', 'date', 'description', 'image', 'created_at', 'updated_at')
             ->whereHas('companies', function($q) use ($companyId) {
                 $q->where('companies.id', $companyId);
             })
@@ -38,7 +38,7 @@ class AuditController extends Controller
     // function pour les audits d'une activité spécifique 
     public function auditsForActivity(int $activityId)
     {
-        $audits = Audit::select('id', 'title', 'date', 'score', 'description', 'image','updated_at')
+        $audits = Audit::select('id', 'title', 'date', 'description', 'image','updated_at')
             ->whereHas('activities', function($q) use ($activityId) {
                 $q->where('activities.id', $activityId);
             })
@@ -183,20 +183,28 @@ class AuditController extends Controller
             ];
         });
 
+        $auditCompany = AuditCompany::where('audit_id', $auditId)
+            ->where('company_id', $company->id)
+            ->first();
+
         // Préparer les données pour le PDF
         $data = [
             'audit' => $audit,
             'company' => $company,
             'customer' => $customer,
             'questions' => $questionsWithAnswers,
+            'auditCompany' => $auditCompany, 
             'generated_at' => now()->format('d/m/Y H:i:s')
         ];
 
         try {
+            $safeAuditTitle = str_replace(['/', '\\'], '_', $audit->title);
+            $safeCompanyName = str_replace(['/', '\\'], '_', $company->name);
+
             $pdf = PDF::loadView('pdf.audit_report', $data)
                 ->setPaper('a4', 'portrait');
 
-            return $pdf->download("audit_{$auditId}_client_{$customerId}.pdf");
+            return $pdf->download("audit {$safeAuditTitle} of company {$safeCompanyName}.pdf");
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Erreur lors de la génération du PDF',
@@ -258,7 +266,7 @@ class AuditController extends Controller
 
     public function show($id)
     {
-        $audit = Audit::select('id', 'title', 'date', 'score', 'description', 'image', 'updated_at', 'created_at')
+        $audit = Audit::select('id', 'title', 'date', 'description', 'image', 'updated_at', 'created_at')
             ->find($id);
 
         if (! $audit) {
@@ -347,5 +355,82 @@ class AuditController extends Controller
             'message' => 'Audit mis à jour avec succès',
             'audit' => $audit,
         ]);
+    }
+
+    public function clientAuditById(Request $request, $auditId, $companyId)
+    {
+        $user = $request->user(); // admin ou customer
+
+        // Récupérer la company
+        $company = Company::find($companyId); 
+        if (!$company) {
+            return response()->json(['message' => 'Entreprise non trouvée'], 404);
+        }
+
+        $customerId = $company->owner_id; // vrai customer lié à cette company
+
+        // Récupérer l’audit spécifique lié à cette company
+        $audit = Audit::where('id', $auditId)
+            ->whereHas('companies', function ($q) use ($company) {
+                $q->where('companies.id', $company->id);
+            })
+            ->with([
+                'questions' => function ($q) {
+                    $q->orderBy('id');
+                },
+                'questions.answers' => function ($query) use ($customerId) {
+                    $query->where('customer_id', $customerId);
+                }
+            ])
+            ->first();
+
+        if (!$audit) {
+            return response()->json(['message' => 'Audit non trouvé pour cette entreprise'], 404);
+        }
+
+        // Récupérer les données pivot
+        $pivot = DB::table('audit_company')
+            ->where('audit_id', $audit->id)
+            ->where('company_id', $company->id)
+            ->first();
+
+        $score = $pivot->score ?? 0;
+        $pivotDate = $pivot->date ?? $audit->created_at;
+        $isSubmitted = (bool) ($pivot->is_submitted ?? false);
+
+        // Mapper les questions avec les réponses du customer
+        $questions = $audit->questions->map(function ($question) use ($customerId) {
+            $answer = $question->answers->where('customer_id', $customerId)->first();
+
+            return [
+                'id' => $question->id,
+                'text' => $question->text,
+                'answer' => $answer ? [
+                    'id' => $answer->id,
+                    'choice' => $answer->choice,
+                    'justification' => $answer->justification
+                ] : null
+            ];
+        });
+
+        $result = [
+            'id' => $audit->id,
+            'title' => $audit->title,
+            'description' => $audit->description,
+            'date' => $pivotDate,
+            'status' => $questions->whereNotNull('answer')->count() === 0
+                ? 'pending'
+                : ($questions->whereNotNull('answer')->count() < $questions->count()
+                    ? 'in_progress'
+                    : 'completed'),
+            'score' => $score,
+            'submitted' => $isSubmitted,
+            'total_questions' => $questions->count(),
+            'answered_count' => $questions->whereNotNull('answer')->count(),
+            'questions' => $questions,
+            'customer_id' => $customerId 
+        ];
+        $result['company_name'] = $company->name;
+        return response()->json($result);
     }
 }

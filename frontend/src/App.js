@@ -12,7 +12,7 @@ import Audits from './components/Audits';
 import DashboardCustomer from './components/DashboardCustomer';
 import DashboardAdmin from './components/DashboardAdmin';
 import AuditDetail from "./components/AuditDetail";
-import Notifications from './components/Notifications';
+import NotificationsAdmin from './components/NotificationsAdmin';
 import UpdateAudit from './components/UpdateAudit';
 import ProfileUpdate from './components/ProfileUpdate';
 import AuditQuestions from "./components/AuditQuestions";
@@ -22,6 +22,7 @@ import AuditCustomer from './components/AuditCustomer';
 import CompanieCustomer from './components/CompanieCustomer';
 import NotificationsCustomer from './components/NotificationsCustomer';
 import ProfileUpdateCustomer from './components/ProfileUpdateCustomer';
+import AuditDetails from './components/AuditDetails';
 
 function App() {
   return (
@@ -39,7 +40,7 @@ function App() {
             <Route path="/audits" element={<Audits /> } /> 
             <Route path="/admin/dashboard" element={<DashboardAdmin />} />    
             <Route path="/audit/:id" element={<AuditDetail />} />
-            <Route path="/admin/notifications" element={<Notifications />} />
+            <Route path="/admin/notifications" element={<NotificationsAdmin />} />
             <Route path="/admin/update-audit" element={<UpdateAudit />} />    
             <Route path="/audits/:auditId" element={<AuditQuestions />} /> 
             <Route path="/admin/update-audit/:auditId" element={<UpdateAudit />} /> 
@@ -51,6 +52,8 @@ function App() {
             <Route path="/customer/notifications" element={<NotificationsCustomer />} />
             <Route path="/customer/audits" element={<AuditCustomer />} />  
             <Route path="/customer/companie" element={<CompanieCustomer />} />
+            <Route path="/audit-details/:auditId/:companyId" element={<AuditDetails />} />
+
           </Routes>
         </div>
       </div>

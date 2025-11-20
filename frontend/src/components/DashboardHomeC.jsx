@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TrendingUp, PieChart, Clock, CheckCircle } from "lucide-react";
 import axios from "axios";
+import { FaTachometerAlt } from "react-icons/fa";
 import {
   ResponsiveContainer,
   BarChart,
@@ -13,8 +14,8 @@ import {
 const DashboardHomeC = () => {
   const [summary, setSummary] = useState(null);
   const monthNames = [
-    "", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    "", "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
   ];
 
   useEffect(() => {
@@ -44,15 +45,15 @@ const DashboardHomeC = () => {
 
   const cardsData = [
     { title: "Total Audits", value: summary.total_audits, icon: <TrendingUp size={28} />, gradient: "from-gray-400 to-gray-500" },
-    { title: "Complétés", value: summary.completed, icon: <CheckCircle size={28} />, gradient: "from-green-500 to-emerald-600" },
-    { title: "En cours", value: summary.in_progress, icon: <Clock size={28} />, gradient: "from-yellow-400 to-amber-500" },
-    { title: "Score Moyen", value: summary.average_score ? `${summary.average_score}%` : "0%", icon: <PieChart size={28} />, gradient: "from-indigo-500 to-indigo-700" },
+    { title: "Completed", value: summary.completed, icon: <CheckCircle size={28} />, gradient: "from-green-500 to-emerald-600" },
+    { title: "In progress", value: summary.in_progress, icon: <Clock size={28} />, gradient: "from-yellow-400 to-amber-500" },
+    { title: "Average Score", value: summary.average_score ? `${summary.average_score}%` : "0%", icon: <PieChart size={28} />, gradient: "from-indigo-500 to-indigo-700" },
   ];
 
   return (
     <div className="p-2 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-8 text-slate-500 mt-6">
-        📊 Tableau de bord Customer
+      <h1 className="text-3xl font-bold mb-8 text-[#1E3A8A] mt-6 flex gap-2"><FaTachometerAlt className="text-[#10B981]" />
+       Customer Dashboard
       </h1>
 
       {/* Cards */}
@@ -73,7 +74,7 @@ const DashboardHomeC = () => {
 
       {/* Graph: Audits par mois */}
       <div className="bg-white p-6 rounded-2xl shadow-lg mt-8">
-        <h2 className="font-semibold mb-4">📅 Audits par mois</h2>
+        <h2 className="font-semibold mb-4">📅 Audits per month</h2>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={Array.from({ length: 12 }, (_, i) => { const monthNum = i + 1; const found = summary.audits_by_month.find(m => m.month === monthNum); return { month: monthNames[monthNum], total: found ? found.total : 0 }; })}>
             <XAxis dataKey="month" interval={0} tick={{ fontSize: 12 }}/>
@@ -86,14 +87,14 @@ const DashboardHomeC = () => {
 
       {/* Recent audits */}
       <div className="bg-white p-6 rounded-2xl shadow-lg mt-8">
-        <h2 className="font-semibold mb-4">📝 Audits récents</h2>
+        <h2 className="font-semibold mb-4">📝 Recent audits</h2>
         <div className="overflow-x-auto">
           <table className="min-w-full table-auto">
             <thead className="border-b bg-blue-50 text-blue-900">
               <tr>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Titre</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Title</th>
                 <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Date</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Statut</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Status</th>
                 <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Score</th>
               </tr>
             </thead>

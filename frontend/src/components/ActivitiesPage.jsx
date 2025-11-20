@@ -117,7 +117,7 @@ const ActivitiesPage = () => {
                 <h3>{audit.title}</h3>
                 <p>{audit.description}</p>
                 <div className="audit-meta">
-                  <span>Dernière modification: {new Date(audit.updated_at).toLocaleDateString()}</span>
+                  <span>Last modification: {new Date(audit.updated_at).toLocaleDateString()}</span>
                 </div>
               </div>
             </div>

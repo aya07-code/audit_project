@@ -34,7 +34,7 @@ const Register = () => {
         setLoading(true);
 
         try {
-                const response = {
+                const payload  = {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,
@@ -45,14 +45,14 @@ const Register = () => {
                 role: 'customer',
                 is_active: true
             };
-            const responses = await axios.post("http://127.0.0.1:8000/api/register", response);
+            const responses = await axios.post("http://127.0.0.1:8000/api/register", payload );
             console.log('User registered:',responses.data); 
 
       setSuccessMessage("Registration successful! Welcome to IA Morocco.");
       setError(null);
       setFormData({ name: "", email: "", password: "", password_confirmation: "", phone: "", adress:"", ville:"" });
       setLoading(false);
-      const userRole = responses.data.user.role || response.role;
+      const userRole = responses.data.user.role;
       if (userRole === 'admin') {
         navigate('/admin/dashboard');
       } else {
@@ -60,7 +60,11 @@ const Register = () => {
       }
 
     } catch (err) {
-      setError(err.responses?.data?.errors || { message: "An error occurred" });
+      setError(
+        err.response?.data?.message || 
+        Object.values(err.response?.data?.errors || {})[0]?.[0] ||
+        "An error occurred"
+     );
       setSuccessMessage(null);
       setLoading(false);
     }
