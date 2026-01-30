@@ -18,6 +18,7 @@ return new class extends Migration
             $table->float('score')->nullable();
             $table->boolean('is_submitted')->default(false);
             $table->date('date')->nullable(); 
+            $table->string('status')->nullable()->default('Pending');
             $table->timestamps();
         });
     }

@@ -7,60 +7,68 @@
             font-family: DejaVu Sans, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f6f8;
+            background-color: #fff;
             color: #333;
         }
         .container {
-            width: 90%;
+            width: 95%;
             margin: auto;
-            padding: 20px;
-            background-color: #fff;
         }
         .header { 
-            text-align: center;
-            margin-bottom: 30px;
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 10px;
         }
-        .header h1 {
+        .header h2 {
             color: #1E3A8A;
-            font-size: 28px;
         }
         .info-section {
-            margin-bottom: 25px;
+            margin-bottom: 10px;
             padding: 15px;
             background: #e8f0fe;
             border-radius: 8px;
         }
-        .info-section h3 {
+        .info-section h5 {
             margin-bottom: 10px;
+            margin-top: -10px;
             color: #1E3A8A;
-            font-size: 18px;
+            font-size: 16px;
             border-bottom: 1px solid #cfd8e3;
             padding-bottom: 5px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-            background-color: #fff;
+        .card {
+            background-color: #f4f6f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 5px 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 4px solid #1E3A8A; 
         }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-            font-size: 14px;
+        .card h5 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #1E3A8A;
         }
-        th {
-            background-color: #1E3A8A;
+        p {
+            font-size: 9px;
+            margin: 6px 0;
+        }
+        .badge {
+            padding: 2px 3px;
+            border-radius: 4px;
             color: #fff;
+            font-size: 11px;
+            display: inline-block;
         }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .score {
-            font-size: 18px;
-            color: #10B981;
-            font-weight: bold;
-            margin-top: 10px;
+        .accurate { background-color: #10B981; }
+        .inaccurate { background-color: #EF4444; }
+        .unknown { background-color: #9CA3AF; }
+        .comment {
+            background-color: #FDE68A;
+            padding: 2px 3px;
+            border-radius: 4px;
+            font-size: 11px;
         }
         .footer {
             text-align: center;
@@ -68,49 +76,83 @@
             color: #666;
             margin-top: 40px;
         }
+        .titre {
+            margin-top: 1px;
+            margin-bottom: 2px;
+            font-size: 16px;
+            padding-bottom: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Audit Report</h1>
+            <table width="100%">
+                <tr>
+                    <td style="width:40%; height:30px; ">
+                    <img src="file://{{ public_path('logo.png') }}" style="width:90px; margin:0;"> 
+                    </td>
+                    <td style="width:60%; height:30px;">
+                        <h2 style="font-size:24px; margin:0;">Audit Report</h1>
+                    </td>
+                </tr>
+            </table>
         </div>
-
         <div class="info-section">
-            <h3>Customer Information</h3>
+            <h5>Customer Information</h5>
             <p><strong>Company:</strong> {{ $company->name }}</p>
             <p><strong>Phone:</strong> {{ $customer->phone }}</p>
             <p><strong>Email:</strong> {{ $customer->email }}</p>
+            <p><strong>Address:</strong> {{ $company->address }}</p>
         </div>
 
         <div class="info-section">
-            <h3>Audit Details</h3>
-            <p><strong>Title:</strong> {{ $audit->title }}</p>
-            <p><strong>Date:</strong> {{ $audit->date }}</p>
-            <p class="score"><strong>Score Global:</strong> {{ $auditCompany->score ?? '-' }}%</p>
+            <h5>Audit Details</h5>
+            <p><strong>Audit standard:</strong> {{ $audit->title }}</p>
+            <p><strong>Date:</strong> {{ $audit->date ?? '-' }}</p>
         </div>
 
-        <h3>Questions and Answers</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Question</th>
-                    <th>Answer</th>
-                    <th>Justification</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($questions as $index => $question)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $question['text'] }}</td>
-                    <td>{{ $question['choice'] }}</td>
-                    <td>{{ $question['justification'] }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <h5 class="titre">Questions and Answers</h5>
+
+        @foreach($questions as $index => $question)
+        @php
+            $statusClass = match($question['validation_status'] ?? '') {
+                'accurate' => 'accurate',
+                'inaccurate' => 'inaccurate',
+                default => 'unknown',
+            };
+        @endphp
+
+        <div class="card">
+            <h5>{{ $index + 1 }}. {{ $question['text'] }}</h4>
+
+            <!-- ALL DETAILS IN ONE LINE -->
+            <p>
+                <strong>Answer:</strong> {{ $question['choice'] }} /
+                <strong>Proof:</strong> {{ $question['justification'] }} /
+                <strong>Date:</strong> {{ $question['date'] }} /
+                <strong>Organization:</strong> {{ $question['certificate_organisme'] }} /
+                <strong>Other:</strong> {{ $question['certificate_customers_count'] }}
+            </p>
+
+            <!-- VALIDATION + COMMENT SAME LINE -->
+            <p>
+                <strong>Validation:</strong>
+                <span class="badge {{ $statusClass }}">
+                    {{ $question['validation_status'] ?? 'Not set' }}
+                </span>
+            </p>
+            <p>
+                <strong>Auditor Feedback:</strong>
+                @if(!empty($question['comment_admin']))
+                    <span class="comment">{{ $question['comment_admin'] }}</span>
+                @else
+                    -
+                @endif
+            </p>
+        </div>
+
+        @endforeach
 
         <div class="footer">
             <p>Document generated on {{ $generated_at }}</p>

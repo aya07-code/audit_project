@@ -31,7 +31,7 @@ export default function EditProfile() {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.put("http://127.0.0.1:8000/api/user/profile", formData, {
+      const response = await axios.put("https://alloaudit.com/api/user/profile", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",

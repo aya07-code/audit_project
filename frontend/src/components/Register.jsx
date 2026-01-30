@@ -1,32 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdPerson, MdEmail, MdLock, MdPhone, MdLocationCity, MdHome } from 'react-icons/md';
+import { MdPerson, MdEmail, MdLock, MdPhone, MdLocationCity, MdHome, MdBusiness ,MdVisibility, MdVisibilityOff} from 'react-icons/md';
 import '../styles/Register.css';
 import Sidebar from "./Sidebar";
-import axios from 'axios';
 import Footer1 from './Footer1';
+import axios from 'axios';
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const Register = () => {
+    const MySwal = withReactContent(Swal);
     const navigate = useNavigate();
+    const [step, setStep] = useState(1);
+
     const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-        phone: '',
-        adress: '',
-        ville: '',
+        // 🔹 Customer info
+        name: '', email: '', password: '', password_confirmation: '', phone: '', adress: '', ville: '',
+        // 🔹 Company info
+        company_name: '', ICE: '', RC: '', company_address: '', activity_id: '',productType: ''
     });
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [error, setError] = useState('');
+
+    const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    useEffect(() => {
+        axios.get('https://alloaudit.com/api/activities')
+            .then(res => setActivities(res.data))
+            .catch(err => console.log(err));
+    }, []);
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        setFormData({...formData, [e.target.name]: e.target.value});
     };
+
+    const handleNext = () => setStep(prev => prev + 1);
+    const handlePrev = () => setStep(prev => prev - 1);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,7 +46,7 @@ const Register = () => {
         setLoading(true);
 
         try {
-                const payload  = {
+            const payload = {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,
@@ -42,118 +54,208 @@ const Register = () => {
                 phone: formData.phone,
                 adress: formData.adress,
                 ville: formData.ville,
+                company_name: formData.company_name,
+                ICE: formData.ICE,
+                RC: formData.RC,
+                company_address: formData.company_address,
+                productType: formData.productType,
+                activity_id: formData.activity_id,
                 role: 'customer',
-                is_active: true
+                is_active: false
             };
-            const responses = await axios.post("http://127.0.0.1:8000/api/register", payload );
-            console.log('User registered:',responses.data); 
 
-      setSuccessMessage("Registration successful! Welcome to IA Morocco.");
-      setError(null);
-      setFormData({ name: "", email: "", password: "", password_confirmation: "", phone: "", adress:"", ville:"" });
-      setLoading(false);
-      const userRole = responses.data.user.role;
-      if (userRole === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/customer/dashboard');
-      }
+            await axios.post("https://alloaudit.com/api/register", payload);
 
-    } catch (err) {
-      setError(
-        err.response?.data?.message || 
-        Object.values(err.response?.data?.errors || {})[0]?.[0] ||
-        "An error occurred"
-     );
-      setSuccessMessage(null);
-      setLoading(false);
-    }
-  };
+            MySwal.fire({
+                icon: "success",
+                title: "Account Created!",
+                text: "Wait for admin approval. Your account and company are pending.",
+                confirmButtonColor: "#1E3A8A"
+            });
 
+            setFormData({
+                name:'', email:'', password:'', password_confirmation:'', phone:'', adress:'', ville:'',
+                company_name:'', ICE:'', RC:'', company_address:'', activity_id:'' ,productType:''
+            });
+            setStep(1);
+            navigate('/login');
+
+            } catch (err) {
+                if (err.response?.data?.errors) {
+                    // جمع جميع رسائل الأخطاء فواحد السترانغ
+                    const allErrors = Object.values(err.response.data.errors)
+                        .flat()
+                        .join("\n");
+
+                    setError(allErrors);
+                } else {
+                    setError(err.response?.data?.message || "An error occurred");
+                }
+
+                setLoading(false);
+            }
+    };
 
     return (
-      <div>
-        <Sidebar />
-        <div className="auth-container1">
-            <div className="auth-box1">
-                <h2>Create Account</h2>
-                <p className="auth-subtitle1">Please fill in the form to register</p>
-                {error && <div style={{background:'#fee2e2',color:'#dc2626',padding:'0.75rem',borderRadius:6,marginBottom:12}}>{typeof error === 'object' ? error.message : error}</div>}
-                {successMessage && <div style={{background:'#d1fae5',color:'#065f46',padding:'0.75rem',borderRadius:6,marginBottom:12}}>{successMessage}</div>}
+        <div>
+            <Sidebar />
+            <div className="auth-container1">
+                <div className="auth-box1">
+                    <h2>Create Account</h2>
+                    {error && <div className="error-msg">{error}</div>}
 
-                <form onSubmit={handleSubmit} className="auth-form">
-                    <div className="form-group1">
-                        <label htmlFor="name">Full Name</label>
-                        <div className="input-icon">
-                            <MdPerson className="icon" />
-                            <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
-                        </div>
-                    </div>
+                    <form className="auth-form1" onSubmit={handleSubmit}>
+                        {/* === Step 1: Customer Info === */}
+                        {step === 1 && (
+                            <>
+                                <div className="form-group1">
+                                    <label>Full Name</label>
+                                    <div className="input-icon">
+                                        <MdPerson className="icon"/>
+                                        <input name="name" value={formData.name} onChange={handleChange} required/>
+                                    </div>
+                                </div>
 
-                    <div className="form-group1">
-                        <label htmlFor="email">Email</label>
-                        <div className="input-icon">
-                            <MdEmail className="icon" />
-                            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
-                        </div>
-                    </div>
+                                <div className="form-group1">
+                                    <label>Email</label>
+                                    <div className="input-icon">
+                                        <MdEmail className="icon"/>
+                                        <input name="email" type="email" value={formData.email} onChange={handleChange} required/>
+                                    </div>
+                                </div>
 
-                    <div className="form-row1">
-                        <div className="form-group1">
-                            <label htmlFor="password">Password</label>
-                            <div className="input-icon">
-                                <MdLock className="icon" />
-                                <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
-                            </div>
-                        </div>
+                                <div className="form-row1">
+                                    <div className="form-group1">
+                                        <label>Password</label>
+                                        <div className="input-icon">
+                                            <MdLock className="icon" />
+                                            <input
+                                                name="password"
+                                                type={showPassword ? "text" : "password"}
+                                                value={formData.password}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                            {showPassword ? (
+                                                <MdVisibilityOff
+                                                    className="eye-icon"
+                                                    onClick={() => setShowPassword(false)}
+                                                />
+                                            ) : (
+                                                <MdVisibility
+                                                    className="eye-icon"
+                                                    onClick={() => setShowPassword(true)}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="form-group1">
+                                        <label>Confirm Password</label>
+                                        <div className="input-icon">
+                                            <MdLock className="icon" />
+                                            <input
+                                                name="password_confirmation"
+                                                type={showConfirmPassword ? "text" : "password"}
+                                                value={formData.password_confirmation}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                            {showConfirmPassword ? (
+                                                <MdVisibilityOff
+                                                    className="eye-icon"
+                                                    onClick={() => setShowConfirmPassword(false)}
+                                                />
+                                            ) : (
+                                                <MdVisibility
+                                                    className="eye-icon"
+                                                    onClick={() => setShowConfirmPassword(true)}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
 
-                        <div className="form-group1">
-                            <label htmlFor="password_confirmation">Confirm Password</label>
-                            <div className="input-icon">
-                                <MdLock className="icon" />
-                                <input type="password" id="password_confirmation" name="password_confirmation" value={formData.password_confirmation} onChange={handleChange} required />
-                            </div>
-                        </div>
-                    </div>
+                                <div className="form-row1">
+                                    <div className="form-group1">
+                                        <label>Phone</label>
+                                        <div className="input-icon">
+                                            <MdPhone className="icon"/>
+                                            <input name="phone" value={formData.phone} onChange={handleChange} required/>
+                                        </div>
+                                    </div>
 
-                    <div className="form-row1">
-                        <div className="form-group1">
-                            <label htmlFor="phone">Phone</label>
-                            <div className="input-icon">
-                                <MdPhone className="icon" />
-                                <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} required />
-                            </div>
-                        </div>
+                                    <div className="form-group1">
+                                        <label>City</label>
+                                        <div className="input-icon">
+                                            <MdLocationCity className="icon"/>
+                                            <input name="ville" value={formData.ville} onChange={handleChange} required/>
+                                        </div>
+                                    </div>
+                                </div>
 
-                        <div className="form-group1">
-                            <label htmlFor="ville">City</label>
-                            <div className="input-icon">
-                                <MdLocationCity className="icon" />
-                                <input type="text" id="ville" name="ville" value={formData.ville} onChange={handleChange} required />
-                            </div>
-                        </div>
-                    </div>
+                                <div className="form-group1">
+                                    <label>Address</label>
+                                    <div className="input-icon">
+                                        <MdHome className="icon"/>
+                                        <input name="adress" value={formData.adress} onChange={handleChange} required/>
+                                    </div>
+                                </div>
 
-                    <div className="form-group1">
-                        <label htmlFor="adress">Address</label>
-                        <div className="input-icon">
-                            <MdHome className="icon" />
-                            <input type="text" id="adress" name="adress" value={formData.adress} onChange={handleChange} required />
-                        </div>
-                    </div>
+                                <button type="button" onClick={handleNext} className="auth-button1">Next</button>
+                            </>
+                        )}
 
-                    <button type="submit" className="auth-button1" disabled={loading}>
-                        {loading ? 'Please wait...' : 'Register'}
-                    </button>
-                </form>
+                        {/* === Step 2: Company Info === */}
+                        {step === 2 && (
+                            <>
+                                <div className="form-group1">
+                                    <label>Company Name</label>
+                                    <div className="input-icon">
+                                        <MdBusiness className="icon"/>
+                                        <input name="company_name" value={formData.company_name} onChange={handleChange} required/>
+                                    </div>
+                                </div>
 
-                <p className="auth-footer1">
-                    Already have an account? <a href="/login">Login</a>
-                </p>
+                                <div className="form-row1">
+                                    <div className="form-group1">
+                                        <label>ICE</label>
+                                        <input name="ICE" value={formData.ICE} onChange={handleChange}/>
+                                    </div>
+
+                                    <div className="form-group1">
+                                        <label>RC</label>
+                                        <input name="RC" value={formData.RC} onChange={handleChange}/>
+                                    </div>
+                                </div>
+
+                                <div className="form-group1">
+                                    <label>Company Address</label>
+                                    <input name="company_address" value={formData.company_address} onChange={handleChange}/>
+                                </div>
+                                <div className="form-group1">
+                                    <label>product Type</label>
+                                    <input name="productType" value={formData.productType} onChange={handleChange}/>
+                                </div>
+
+                                <div className="form-group1">
+                                    <label>Activity</label>
+                                    <select   className="select"  name="activity_id" value={formData.activity_id} onChange={handleChange} required>
+                                        <option value="">Select Activity</option>
+                                        {activities.map(act => <option key={act.id} value={act.id}>{act.name}</option>)}
+                                    </select>
+                                </div>
+
+                                <div className="flex gap-2 mt-4">
+                                    <button type="button" onClick={handlePrev} className="auth-button1 bg-gray-500">Previous</button>
+                                    <button type="submit" disabled={loading} className="auth-button1">{loading ? 'Please wait...' : 'Register'}</button>
+                                </div>
+                            </>
+                        )}
+                    </form>
+                </div>
             </div>
+            <Footer1 />
         </div>
-         <Footer1 />
-      </div>
     );
 };
 

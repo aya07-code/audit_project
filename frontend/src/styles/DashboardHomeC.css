@@ -1,0 +1,149 @@
+/* ==============================
+   DashboardHomeC – Base Styles
+============================== */
+
+.customer-dashboard {
+  background-color: #f3f4f6;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+
+/* Page Title */
+.customer-dashboard h1 {
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+/* Cards Grid */
+.customer-dashboard .grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.customer-dashboard .grid > div {
+  flex: 1 1 calc(100% - 1rem); /* Mobile full width */
+  min-width: 180px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Disable hover effect for mobile */
+.customer-dashboard .hover\:scale-105:hover {
+  transform: none;
+}
+
+/* Table */
+.customer-dashboard table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.customer-dashboard th,
+.customer-dashboard td {
+  vertical-align: middle;
+  padding: 8px;
+}
+
+/* ==============================
+   Mobile (≤ 768px)
+============================== */
+@media (max-width: 768px) {
+
+  /* Title */
+ .customer-dashboard h1 {
+        font-size: 1.5rem;
+        line-height: 1.2rem;
+    }
+
+  /* Cards */
+  .customer-dashboard .grid > div {
+    flex: 1 1 100%;
+    min-height: 120px;
+    padding: 1rem;
+  }
+
+  /* Chart font size */
+  .recharts-wrapper {
+    font-size: 11px;
+  }
+
+  /* Table font size */
+  .customer-dashboard table {
+    font-size: 12px;
+  }
+   .customer-dashboard .bg-white.p-6 {
+    padding: 1rem; /* réduit padding à 16px */
+  }
+
+  /* Hide Status column on mobile */
+  .customer-dashboard table th,
+  .customer-dashboard table td {
+    padding: 2px 3px; /* padding plus petit */
+  }
+  /* Bottom space for mobile sidebar */
+  .customer-content {
+    padding-bottom: 80px;
+  }
+  .graph {
+    padding: 0.5rem;
+     overflow-x: visible;
+  }
+
+}
+
+/* ==============================
+   Small Mobile (≤ 480px)
+============================== */
+@media (max-width: 480px) {
+  .customer-dashboard h1 {
+    font-size: 1.2rem;
+  }
+
+  .customer-dashboard .grid > div p {
+    font-size: 0.9rem;
+  }
+
+  .recharts-wrapper {
+    font-size: 10px;
+  }
+}
+/* ==============================
+   Tablet (769px – 1024px)
+============================== */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .customer-dashboard h1 {
+    font-size: 1.6rem;
+  }
+
+  .customer-dashboard .grid > div {
+    flex: 1 1 calc(50% - 1rem);
+  }
+  .dasboardC {
+    margin-top: 32px;
+  }
+}
+
+/* ==============================
+   Desktop (> 1024px)
+============================== */
+@media (min-width: 1025px) {
+  .customer-dashboard .grid > div {
+    flex: 1 1 calc(25% - 1rem);
+  }
+}
+
+/* ==============================
+   Chart & Tooltip Styling
+============================== */
+.recharts-tooltip-wrapper {
+  font-size: 12px;
+}
+
+/* ==============================
+   Cards hover for Desktop
+============================== */
+@media (min-width: 769px) {
+  .customer-dashboard .hover\:scale-105:hover {
+    transform: scale(1.05);
+  }
+}

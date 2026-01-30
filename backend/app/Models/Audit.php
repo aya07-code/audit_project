@@ -9,7 +9,7 @@ class Audit extends Model
 {
    use HasFactory;
 
-    protected $fillable = ['title', 'company_id', 'date', 'description', 'image'];
+    protected $fillable = ['title', 'company_id', 'date', 'description','langDescription' ,'image','price'];
 
     public function companies()
     {
@@ -19,11 +19,6 @@ class Audit extends Model
     public function questions()
     {
         return $this->belongsToMany(Question::class, 'audit_question');
-    }
-
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
     }
 
     public function activities()
@@ -40,4 +35,5 @@ class Audit extends Model
     {
         return $this->hasMany(Answer::class);
     }
+
 }

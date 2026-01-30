@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { TrendingUp, PieChart, Clock, CheckCircle } from "lucide-react";
 import axios from "axios";
 import { FaTachometerAlt } from "react-icons/fa";
+import "../styles/DashboardHomeC.css";
 import {
   ResponsiveContainer,
   BarChart,
@@ -22,7 +23,7 @@ const DashboardHomeC = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://127.0.0.1:8000/api/customer/dashboard", {
+        const res = await axios.get("https://alloaudit.com/api/customer/dashboard", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setSummary(res.data);
@@ -51,7 +52,7 @@ const DashboardHomeC = () => {
   ];
 
   return (
-    <div className="p-2 bg-gray-100 min-h-screen">
+    <div className=" dasboardC p-2 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-8 text-[#1E3A8A] mt-6 flex gap-2"><FaTachometerAlt className="text-[#10B981]" />
        Customer Dashboard
       </h1>
@@ -73,11 +74,14 @@ const DashboardHomeC = () => {
       </div>
 
       {/* Graph: Audits par mois */}
-      <div className="bg-white p-6 rounded-2xl shadow-lg mt-8">
+      <div className=" graph bg-white p-6 rounded-2xl shadow-lg mt-8">
         <h2 className="font-semibold mb-4">📅 Audits per month</h2>
         <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={Array.from({ length: 12 }, (_, i) => { const monthNum = i + 1; const found = summary.audits_by_month.find(m => m.month === monthNum); return { month: monthNames[monthNum], total: found ? found.total : 0 }; })}>
-            <XAxis dataKey="month" interval={0} tick={{ fontSize: 12 }}/>
+          <BarChart data={Array.from({ length: 12 }, (_, i) => { const monthNum = i + 1; const found = summary.audits_by_month.find(m => m.month === monthNum); return { month: monthNames[monthNum], total: found ? found.total : 0 }; })} margin={{ top: 0, right: 0, left: 0, bottom: 0 }} >
+            <XAxis dataKey="month" interval={0} tick={{ fontSize: window.innerWidth < 480 ? 8 : 12 }}
+              angle={window.innerWidth < 768 ? -45 : 0}           
+              textAnchor={window.innerWidth < 768 ? "end" : "middle"} 
+            />
             <YAxis domain={[0, 3]} tickCount={4} allowDecimals={false} />
             <Tooltip />
             <Bar dataKey="total" fill="#10B981 " radius={[6,6,0,0]} />
@@ -88,7 +92,7 @@ const DashboardHomeC = () => {
       {/* Recent audits */}
       <div className="bg-white p-6 rounded-2xl shadow-lg mt-8">
         <h2 className="font-semibold mb-4">📝 Recent audits</h2>
-        <div className="overflow-x-auto">
+        <div className=" recent overflow-x-auto">
           <table className="min-w-full table-auto">
             <thead className="border-b bg-blue-50 text-blue-900">
               <tr>

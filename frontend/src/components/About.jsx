@@ -8,13 +8,16 @@ function About() {
         <div className="about-text">
           <h2>Who We Are</h2>
           <div className="divider"></div>
-          <p>
-             <strong>AuditEase Pro</strong> 
-            <strong>International Associates Morocco</strong> is a consulting and auditing firm dedicated to supporting organizations in achieving excellence, compliance, and sustainability.
-            With a strong expertise in <strong>Audit, Training, and Certification</strong>, we help businesses meet international standards such as <strong>SMETA, BSCI, SA8000, WRAP, and ISO 9001.</strong> 
-            Our mission is to empower companies to improve their <strong>social responsibility</strong>, <strong>quality management</strong>, and <strong>environmental performance</strong> through personalized guidance and continuous improvement.
-            Headquartered in <strong>Morocco </strong>, we collaborate with national and international partners to deliver <strong>high-impact and reliable audit services</strong>.
-          </p>
+      <p>
+        <strong>Allo Audit</strong> is a dedicated, confidential, and multilingual 
+        support service specializing in <strong>remote assistance, telephone guidance, 
+        and mock audits</strong> in social and technical compliance.  
+        Available <strong>24/7</strong>, our mission is to facilitate and secure all audit 
+        procedures by ensuring fast, reliable, and fully confidential communication 
+        between workers, managers, auditors, and responsible parties.  
+        We help organizations strengthen transparency, coordination, and the overall 
+        reliability of their audit process while adhering to international standards.
+      </p>
         </div>
         <div className="about-image">
           <img

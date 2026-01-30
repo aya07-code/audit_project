@@ -49,3 +49,20 @@
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
+
+
+
+@media (max-width: 768px) {
+  .about-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .divider {
+    margin: 0 auto 1.5rem;
+  }
+
+  .about-image {
+    margin-top: 0;
+  }
+}

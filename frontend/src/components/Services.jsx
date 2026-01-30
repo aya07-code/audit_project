@@ -9,26 +9,26 @@ import {
 
 function Services() {
   const services = [
-    {
-      icon: <FaClipboardCheck />,
-      title: "Social & Environmental Audits",
-      desc: "We conduct detailed assessments to ensure compliance with international standards such as SMETA, BSCI, SA8000, and ISO.",
-    },
-    {
-      icon: <FaChalkboardTeacher />,
-      title: "Training & Capacity Building",
-      desc: "Customized training sessions to enhance your team's knowledge in compliance, safety, and quality management.",
-    },
-    {
-      icon: <FaShieldAlt />,
-      title: "Certification Support",
-      desc: "Expert assistance to help your organization achieve and maintain international certifications effectively.",
-    },
-    {
-      icon: <FaChartLine />,
-      title: "Consulting & Continuous Improvement",
-      desc: "Strategic consulting to identify growth opportunities, reduce risks, and drive sustainable improvement.",
-    },
+      {
+        icon: <FaClipboardCheck />,
+        title: "Pre-Audit Preparation",
+        desc: "Thorough guidance to anticipate needs, organize your pre-audit, and ensure readiness for social and technical assessments.",
+      },
+      {
+        icon: <FaChalkboardTeacher />,
+        title: "Real-Time Technical Support",
+        desc: "Immediate and personalized remote assistance during every stage of the audit, ensuring clarity, compliance, and quick problem resolution.",
+      },
+      {
+        icon: <FaShieldAlt />,
+        title: "Confidential Worker Interviews",
+        desc: "Secure, multilingual, and confidential communication line dedicated to facilitating worker–auditor interactions during social audits.",
+      },
+      {
+        icon: <FaChartLine />,
+        title: "On-Audit Coordination & Follow-Up",
+        desc: "Full support on the audit day: coordination, direct follow-up of each step, and targeted recommendations for optimal compliance.",
+      },
   ];
 
   return (

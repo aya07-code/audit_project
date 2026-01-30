@@ -11,18 +11,18 @@ use App\Models\User;
 class AuthenticatedSessionController extends Controller
 {
 
-public function store(LoginRequest $request)
-{
-    $request->authenticate();
+    public function store(LoginRequest $request)
+    {
+        $request->authenticate();
 
-    $user = $request->user();
-    $token = $user->createToken('api-token')->plainTextToken;
+        $user = $request->user();
+        $token = $user->createToken('api-token')->plainTextToken;
 
-    return response()->json([
-        'token' => $token,
-        'user' => $user,
-    ]);
-}
+        return response()->json([
+            'token' => $token,
+            'user' => $user,
+        ]);
+    }
 
     public function destroy(Request $request)
     {

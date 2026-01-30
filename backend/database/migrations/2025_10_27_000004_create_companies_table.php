@@ -17,6 +17,9 @@ return new class extends Migration
         $table->string('ICE')->nullable();
         $table->string('RC')->nullable();
         $table->string('address')->nullable();
+        $table->string('CNSS')->nullable();
+        $table->string('GPS')->nullable();
+        $table->string('productType')->nullable();
         $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
         $table->foreignId('activity_id')->constrained('activities')->cascadeOnDelete();
         $table->timestamps();

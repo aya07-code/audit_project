@@ -18,6 +18,11 @@ class Customer extends User
         });
     }
 
+        public function payments()
+    {
+        return $this->hasMany(Payment::class, 'client_id');
+    }
+
     public function company()
     {
         return $this->hasOne(Company::class , 'owner_id');
@@ -26,11 +31,6 @@ class Customer extends User
     public function admin()
     {
         return $this->belongsTo(Admin::class, 'admin_id');
-    }
-
-    public function payments()
-    {
-        return $this->hasMany(Payment::class, 'client_id');
     }
 
     public function adminsPivot()

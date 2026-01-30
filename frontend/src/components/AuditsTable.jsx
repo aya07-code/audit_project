@@ -19,7 +19,7 @@ const AuditsTable = () => {
   const fetchAudits = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://127.0.0.1:8000/api/audits", {
+      const response = await axios.get("https://alloaudit.com/api/audits", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAudits(response.data);
@@ -79,7 +79,7 @@ const AuditsTable = () => {
         try {
           const token = localStorage.getItem("token");
           await axios.put(
-            `http://127.0.0.1:8000/api/audits/${editingAudit}`,
+            `https://alloaudit.com/api/audits/${editingAudit}`,
             formData,
             {
               headers: { Authorization: `Bearer ${token}` },

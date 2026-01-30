@@ -24,7 +24,7 @@ export default function Password({ activeTab }) {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.put("http://localhost:8000/api/user/password", formData, {
+      await axios.put("https://alloaudit.com/api/user/password", formData, {
           headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",

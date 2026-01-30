@@ -18,17 +18,6 @@ class NotificationController extends Controller
         return response()->json($notifications);
     }
 
-    // الحصول على إشعارات المستخدم الحالي
-    public function getUserNotifications()
-    {
-        $user = auth()->user();
-        $notifications = Notification::where('user_id', $user->id)
-            ->latest()
-            ->get();
-        
-        return response()->json($notifications);
-    }
-
     // إنشاء إشعار
     public function store(Request $request)
     {
@@ -68,6 +57,17 @@ class NotificationController extends Controller
         return response()->json($notifications, 201);
     }
 
+        // الحصول على إشعارات المستخدم الحالي
+    public function getUserNotifications()
+    {
+        $user = auth()->user();
+        $notifications = Notification::where('user_id', $user->id)
+            ->latest()
+            ->get();
+        
+        return response()->json($notifications);
+    }
+
     // وضع علامة مقروء على الإشعار
     public function markAsRead($id)
     {
@@ -94,4 +94,36 @@ class NotificationController extends Controller
         $notification->delete();
         return response()->json(['message' => 'The notification has been deleted.']);
     }
+
+    public function contactMessage(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:50',
+            'email' => 'required|email|max:255',
+            'message' => 'required|string|max:2000',
+        ]);
+
+        // جلب جميع الإداريين
+        $admins = User::where('role', 'admin')->get();
+
+        $notifications = [];
+
+        foreach ($admins as $admin) {
+            $notif = Notification::create([
+                'text' => $validated['message'],
+                'type' => 'contact_message',
+                'user_id' => $admin->id,
+                'name' => $validated['name'],
+                'company_name' => $validated['company_name'] ?? null,
+                'phone' => $validated['phone'] ?? null,
+                'email' => $validated['email'],
+                'is_read' => false,
+            ]);
+        }
+
+        return response()->json(['message' => 'Message delivered successfully'], 201);
+    }
+
 }

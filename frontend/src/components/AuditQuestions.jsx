@@ -21,7 +21,7 @@ const AuditQuestions = () => {
   const fetchAudit = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`http://127.0.0.1:8000/api/audits/${auditId}`, {
+      const res = await axios.get(`https://alloaudit.com/api/audits/${auditId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAudit(res.data);
@@ -39,7 +39,7 @@ const AuditQuestions = () => {
   const fetchQuestions = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`http://127.0.0.1:8000/api/questions/audits/${auditId}`, {
+      const res = await axios.get(`https://alloaudit.com/api/questions/audits/${auditId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setQuestions(res.data);
@@ -72,7 +72,7 @@ const AuditQuestions = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `http://127.0.0.1:8000/api/questions/audits/${auditId}`,
+        `https://alloaudit.com/api/questions/audits/${auditId}`,
         { text: newQuestion },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -122,7 +122,7 @@ const AuditQuestions = () => {
         try {
           const token = localStorage.getItem("token");
           await axios.put(
-            `http://127.0.0.1:8000/api/questions/audits/${auditId}/questions/${questionId}`,
+            `https://alloaudit.com/api/questions/audits/${auditId}/questions/${questionId}`,
             { text: editText },
             { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -165,7 +165,7 @@ const AuditQuestions = () => {
         try {
           const token = localStorage.getItem("token");
           await axios.delete(
-            `http://127.0.0.1:8000/api/questions/audits/${auditId}/questions/${questionId}`,
+            `https://alloaudit.com/api/questions/audits/${auditId}/questions/${questionId}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
           fetchQuestions();
@@ -195,12 +195,12 @@ const AuditQuestions = () => {
         <div className="flex items-center mb-4">
           <button
             onClick={() => navigate(-1)}
-            className="text-gray-600 hover:text-gray-800 mr-4"
+            className="text-blue-500 hover:text-blue-600 mr-4"
           >
             <FontAwesomeIcon icon={faArrowLeft} /> Back
           </button>
           <h2 className="text-xl font-bold text-blue-900">
-            {audit ? `Questions de l’audit : ${audit.title}` : "Chargement..."}
+            {audit ? `Audit questions : ${audit.title}` : "Chargement..."}
           </h2>
         </div>
 

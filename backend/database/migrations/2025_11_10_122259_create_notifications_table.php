@@ -11,10 +11,13 @@ return new class extends Migration {
             $table->id();
             $table->string('text');
             $table->string('type')->default('info'); 
+            $table->string('name')->nullable();
+            $table->string('email')->nullable();
             $table->boolean('is_read')->default(false);
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
             $table->foreignId('audit_id')->nullable()->constrained()->onDelete('cascade'); 
             $table->foreignId('company_id')->nullable()->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('payment_id')->nullable();
             $table->timestamps();
         });
     }

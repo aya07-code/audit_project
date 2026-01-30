@@ -7,26 +7,47 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
-
-    public function index()
+    public function index(Request $request)
     {
-        // Charger les companies avec leurs propriétaires et leur activité
-        $companies = Company::with(['customer', 'activity'])->get();
+        $query = Company::with(['customer', 'activity', 'audits']);
 
-        // Transformer le résultat pour ne retourner que ce dont tu as besoin
-        $companies = $companies->map(function($company) {
+        // 🔹 Filter by city
+        if (!empty($request->city)) {
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->where('ville', $request->city);
+            });
+        }
+
+        // 🔹 Filter by activity
+        if (!empty($request->activity_id)) {
+            $query->where('activity_id', $request->activity_id);
+        }
+
+        // 🔹 Filter by audit
+        if (!empty($request->audit_id)) {
+            $query->whereHas('audits', function ($q) use ($request) {
+                $q->where('audit_company.audit_id', $request->audit_id);
+            });
+        }
+
+        $companies = $query->get()->map(function ($company) {
+            $owner = $company->customer;
+            $activity = $company->activity;
+
             return [
-                'id'             => $company->id, // 🔹 important
+                'id'             => $company->id,
                 'company_name'   => $company->name,
-                'ICE'            =>$company->ICE,
-                'RC'             =>$company->RC,
-                'address'        =>$company->address,
-                'activity_name'  => $company->activity->name ?? null,
-                'activity_id'    => $company->activity->id ?? null, // 🔹 utile pour edit
-                'owner_name'     => $company->customer->name ?? null,
-                'owner_email'    => $company->customer->email ?? null,
-                'owner_ville'    => $company->customer->ville ?? null,
-                'owner_id'       => $company->customer->id ?? null, // 🔹 utile pour edit
+                'ICE'            => $company->ICE,
+                'RC'             => $company->RC,
+                'address'        => $company->address,
+                'CNSS'           => $company->CNSS,
+                'GPS'            => $company->GPS,
+                'activity_name'  => $activity ? $activity->name : null,
+                'activity_id'    => $activity ? $activity->id : null,
+                'owner_name'     => $owner ? $owner->name : null,
+                'owner_email'    => $owner ? $owner->email : null,
+                'owner_ville'    => $owner ? $owner->ville : null,
+                'owner_id'       => $owner ? $owner->id : null,
             ];
         });
 
@@ -53,6 +74,9 @@ class CompanyController extends Controller
                 'ICE'     =>$company->ICE,
                 'RC'      =>$company->RC,
                 'address' =>$company->address,
+                'CNSS'    => $company->CNSS,
+                'GPS'     => $company->GPS,
+                'productType' => $company->productType,
 
             ],
             'customer' => [
@@ -89,6 +113,9 @@ class CompanyController extends Controller
             'ICE' => 'nullable|string|max:50',
             'RC' => 'nullable|string|max:50',
             'address' => 'nullable|string|max:255',
+            'CNSS' => 'nullable|string|max:255',
+            'GPS' => 'nullable|string|max:255',
+            'productType' => 'nullable|string|max:255',
         ]);
 
         $company = Company::create([
@@ -98,6 +125,9 @@ class CompanyController extends Controller
             'ICE' => $validated['ICE'] ,
             'RC' => $validated['RC'] ,
             'address' => $validated['address'] ,
+            'CNSS' => $validated['CNSS'] ,
+            'GPS' => $validated['GPS'] ,
+            'productType' => $validated['productType'] ,
         ]);
 
         return response()->json(['message' => 'Compagnie créée avec succès', 'company' => $company], 201);
@@ -117,6 +147,9 @@ class CompanyController extends Controller
             'ICE' => 'nullable|string|max:50',
             'RC' => 'nullable|string|max:50',
             'address' => 'nullable|string|max:255',
+            'CNSS' => 'nullable|string|max:255',
+            'GPS' => 'nullable|string|max:255',
+            'productType' => 'nullable|string|max:255',
         ]);
 
         $company->update($validated);
@@ -149,5 +182,29 @@ class CompanyController extends Controller
         }
     }
 
+    public function filtersData()
+    {
+        // Tous les villes des users
+        $cities = \DB::table('users')
+            ->whereNotNull('ville')
+            ->distinct()
+            ->pluck('ville');
+
+        // Toutes les activités
+        $activities = \DB::table('activities')
+            ->select('id', 'name')
+            ->get();
+
+        // Tous les audits
+        $audits = \DB::table('audits')
+            ->select('id', 'title')
+            ->get();
+
+        return response()->json([
+            'cities' => $cities,
+            'activities' => $activities,
+            'audits' => $audits,
+        ]);
+    }
 
 }

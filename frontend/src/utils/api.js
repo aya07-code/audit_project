@@ -1,4 +1,4 @@
-const BASE = 'http://127.0.0.1:8000/api';
+const BASE = 'https://alloaudit.com/api';
 
 export function getAuthHeaders() {
   const token = localStorage.getItem('token');
@@ -10,7 +10,7 @@ export function getAuthHeaders() {
 
 export async function getCSRFToken() {
   try {
-    await fetch('http://127.0.0.1:8000/sanctum/csrf-cookie', {
+    await fetch('https://alloaudit.com/sanctum/csrf-cookie', {
       credentials: 'include'
     });
     return document.cookie

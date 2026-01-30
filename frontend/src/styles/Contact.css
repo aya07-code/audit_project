@@ -113,17 +113,22 @@
   transform: translateY(-2px);
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .contact-wrapper {
-    flex-direction: column;
+@media (max-width: 600px) {
+  .contact-form {
+    min-width: 100%;
+    padding: 1.5rem;
   }
 
-  .contact-form {
-    margin-top: 2rem;
+  .contact-form button {
+    width: 100%;
+  }
+
+  .contact-left h2 {
+    font-size: 1.8rem;
   }
 
   .contact-left p {
-    max-width: 100%;
+    font-size: 1rem;
   }
 }
+

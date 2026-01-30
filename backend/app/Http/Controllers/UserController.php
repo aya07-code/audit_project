@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\Answer;
 use App\Models\Audit;
 use App\Models\Customer;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -38,7 +39,9 @@ class UserController extends Controller
                 'name' => $customer->name,
                 'email' => $customer->email,
                 'ville' => $customer->ville,
+                'unapprove_reason' => $customer->unapprove_reason,
                 'company_name' => $customer->company ? $customer->company->name : null,
+                'is_active' => $customer->is_active,
             ];
         });
         return response()->json($customers);
@@ -56,7 +59,7 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:15',
             'adress' => 'nullable|string|max:255',
             'ville' => 'nullable|string|max:20',
-            'is_active' => 'boolean',
+            'is_active' => false,
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -71,6 +74,51 @@ class UserController extends Controller
         $user = User::create($validated);
 
         return response()->json($user, 201);
+    }
+
+    public function approve($id)
+    {
+        if ($response = $this->authorizeAdmin()) return $response;
+
+        $customer = User::where('role', 'customer')->findOrFail($id);
+
+        $customer->update([
+            'is_active' => true,
+            'unapprove_reason' => null, // ← مسح reason السابق
+        ]);
+
+        Notification::create([
+            'text' => "Your account has been approved by admin.",
+            'type' => 'approval',
+            'user_id' => $customer->id,
+            'company_id' => null,
+            'audit_id' => null,
+        ]);
+
+        return response()->json(['message' => 'Customer activated successfully']);
+    }
+
+    public function unapprove(Request $request, $id)
+    {
+        if ($response = $this->authorizeAdmin()) return $response;
+
+        $customer = User::where('role', 'customer')->findOrFail($id);
+
+        // تخزين الـreason مباشرة
+        $customer->update([
+            'is_active' => false,
+            'unapprove_reason' => $request->reason ?? null,
+        ]);
+
+        Notification::create([
+            'text' => "Your account has been disabled by admin. Reason: " . ($request->reason ?? "No reason provided"),
+            'type' => 'unapproval',
+            'user_id' => $customer->id,
+            'company_id' => null,
+            'audit_id' => null,
+        ]);
+
+        return response()->json(['message' => 'Customer disabled successfully']);
     }
 
     //Afficher un client spécifique
@@ -120,27 +168,38 @@ class UserController extends Controller
                 ->first();
 
             $score = $pivot->score ?? 0;
-            $scores[] = $score;
 
-            $questionIds = $audit->questions()->select('questions.id')->pluck('id');
-            $answers = Answer::where('audit_id', $audit->id)
-                ->where('customer_id', $user->id)
-                ->whereIn('question_id', $questionIds)
-                ->get();
+            $questions = $audit->questions()->with(['answers' => function ($q) use ($user, $audit) {
+                $q->where('customer_id', $user->id)
+                ->where('audit_id', $audit->id);
+            }])->get();
 
-            $total_answers = $answers->count();
-            $total_questions = $audit->questions()->count();
+            // compter réponses réellement remplies
+            $answeredCount = $questions->filter(function ($q) {
+                $a = $q->answers->first();
+                return $a && (
+                    (!empty($a->choice) && $a->choice !== 'N/A') ||
+                    !empty($a->reponse) ||
+                    !empty($a->date) ||
+                    !empty($a->certificate_organisme) ||
+                    !empty($a->certificate_customers_count) ||
+                    !empty($a->attachment)
+                );
+            })->count();
 
-            if ($total_answers === 0) {
-                $status = 'pending';
-                $pendingCount++;
-            } elseif ($total_answers < $total_questions) {
+            $totalQuestions = $questions->count();
+
+            $status = 'pending';
+            if ($answeredCount > 0 && $answeredCount < $totalQuestions) {
                 $status = 'in_progress';
-                $inProgressCount++;
-            } else {
+            } elseif ($answeredCount === $totalQuestions) {
                 $status = 'completed';
-                $completedCount++;
             }
+
+            // compter les statuts pour le dashboard
+            if ($status === 'pending') $pendingCount++;
+            if ($status === 'in_progress') $inProgressCount++;
+            if ($status === 'completed') $completedCount++;
 
             $auditList[] = [
                 'id' => $audit->id,
@@ -149,8 +208,10 @@ class UserController extends Controller
                 'status' => $status,
                 'score' => $score,
             ];
-        }
 
+            $scores[] = $score;
+        }
+        
         // moyenne réelle
         $avgScore = count($scores) ? round(array_sum($scores) / count($scores), 2) : 0;
 

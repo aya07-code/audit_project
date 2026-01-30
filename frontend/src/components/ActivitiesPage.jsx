@@ -8,7 +8,7 @@ const ActivitiesPage = () => {
   const [selectedActivity, setSelectedActivity] = useState("All");
   const [selectedAudits, setSelectedAudits] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const auditsPerPage = 8;
+  const auditsPerPage = 6;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,6 +45,7 @@ const ActivitiesPage = () => {
     setSelectedActivity(activity);
     setCurrentPage(1);
 
+    // 🔹 ALL
     if (activity === "All") {
       const allAuditsMap = new Map();
       for (let act of activities) {
@@ -59,7 +60,34 @@ const ActivitiesPage = () => {
         }
       }
       setSelectedAudits(Array.from(allAuditsMap.values()));
-    } else {
+    }
+
+    // 🔹 OTHER
+    else if (activity === "Other") {
+      const resAll = await apiGet("/audits"); // جميع audits
+      if (resAll.ok) {
+        const allAudits = await resAll.json();
+
+        const auditsWithActivity = new Set();
+
+        for (let act of activities) {
+          const resA = await apiGet(`/audits/activities/${act.id}`);
+          if (resA.ok) {
+            const audits = await resA.json();
+            audits.forEach((a) => auditsWithActivity.add(a.id));
+          }
+        }
+
+        const otherAudits = allAudits.filter(
+          (audit) => !auditsWithActivity.has(audit.id)
+        );
+
+        setSelectedAudits(otherAudits);
+      }
+    }
+
+    // 🔹 SPECIFIC ACTIVITY
+    else {
       const resA = await apiGet(`/audits/activities/${activity.id}`);
       if (resA.ok) {
         const audits = await resA.json();
@@ -67,6 +95,7 @@ const ActivitiesPage = () => {
       }
     }
   };
+
 
   // Pagination logic
   const indexOfLastAudit = currentPage * auditsPerPage;
@@ -81,23 +110,35 @@ const ActivitiesPage = () => {
           <h1>All Audits</h1>
           <div className="activities-filter">
             <p>Filter By:</p>
-            <select
-              value={selectedActivity === "All" ? "All" : selectedActivity.id}
-              onChange={(e) => {
-                const act =
-                  e.target.value === "All"
+              <select
+                value={
+                  selectedActivity === "All"
                     ? "All"
-                    : activities.find((a) => a.id === parseInt(e.target.value));
-                handleFilter(act);
-              }}
-            >
-              <option value="All">All Activities</option>
-              {activities.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
+                    : selectedActivity === "Other"
+                    ? "Other"
+                    : selectedActivity.id
+                }
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const act =
+                    value === "All"
+                      ? "All"
+                      : value === "Other"
+                      ? "Other"
+                      : activities.find((a) => a.id === parseInt(value));
+
+                  handleFilter(act);
+                }}
+              >
+                <option value="All">All Activities</option>
+                <option value="Other">Other</option>
+
+                {activities.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.name}
+                  </option>
+                ))}
+              </select>
           </div>
         </div>
       </header>
@@ -112,10 +153,11 @@ const ActivitiesPage = () => {
                 src={audit.image || "https://via.placeholder.com/300x150"}
                 alt={audit.title}
                 className="audit-image"
+                loading="lazy"
               />
               <div className="audit-content">
                 <h3>{audit.title}</h3>
-                <p>{audit.description}</p>
+                <p  className="audit-p">{audit.description}</p>
                 <div className="audit-meta">
                   <span>Last modification: {new Date(audit.updated_at).toLocaleDateString()}</span>
                 </div>

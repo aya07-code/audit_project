@@ -3,22 +3,27 @@ import "../styles/Value.css";
 
 function Value() {
   const values = [
-    { number: "15+", label: "Years of Expertise in Auditing & Training" },
-    { number: "250+", label: "Successful Audits & Certifications" },
-    { number: "98%", label: "Client Satisfaction Rate" },
-    { number: "10+", label: "International Compliance Programs" },
+    { number: "24/7", label: "Hotline Availability for All Audits" },
+    { number: "100%", label: "Confidential & Secure Communication" },
+    { number: "3+", label: "Languages Supported (AR • FR • EN)" },
+    { number: "Wide", label: "Coverage of Social & Technical Audit Protocols" },
   ];
+
 
   return (
     <section id="value" className="value-section">
       <h2>Our Added Value</h2>
       <div className="divider"></div>
 
-      <p className="value-intro">
-        At <strong>International Associates Morocco</strong>, our strength lies in our expertise,
-        commitment, and global vision. We combine quality, ethics, and innovation to deliver 
-        measurable impact for our clients.
-      </p>
+    <p className="value-intro">
+      At <strong>Allo Audit</strong>, our strength lies in our commitment to 
+      professionalism, confidentiality, and operational excellence.  
+      We combine <strong>technical expertise, reactivity, and multilingual support</strong> 
+      to provide organizations with high-quality assistance throughout every step of 
+      their social and technical audits.  
+      Our approach ensures clarity, compliance, and optimal performance for all 
+      partners involved.
+    </p>
 
       <div className="value-content">
         {values.map((item, index) => (

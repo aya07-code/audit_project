@@ -14,12 +14,15 @@ const CompanyCustomer = () => {
     ICE: "",
     RC: "",
     address: "",
+    CNSS: "",
+    GPS: "",
+    productType: "",
     activity_id: "",
   });
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/customer/company-info", {
+      .get("https://alloaudit.com/api/customer/company-info", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -29,6 +32,9 @@ const CompanyCustomer = () => {
           ICE: res.data.company.ICE,
           RC: res.data.company.RC,
           address: res.data.company.address,
+          CNSS: res.data.company.CNSS,
+          GPS: res.data.company.GPS,
+          productType: res.data.company.productType,
           activity_id: res.data.activity.id,
         });
       })
@@ -38,7 +44,7 @@ const CompanyCustomer = () => {
   const handleUpdate = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/companies/${data.company.id}`,
+        `https://alloaudit.com/api/companies/${data.company.id}`,
         form,
         {
           headers: {
@@ -103,6 +109,8 @@ const CompanyCustomer = () => {
               <p className="text-slate-700"><b>ICE :</b> {data.company.ICE}</p>
               <p className="text-slate-700"><b>RC :</b> {data.company.RC}</p>
               <p className="text-slate-700"><b>Address :</b> {data.company.address}</p>
+              <p className="text-slate-700"><b>CNSS :</b>{data.company.CNSS} </p>
+              <p className="text-slate-700"><b>GPS :</b>{data.company.GPS} </p>
             </>
           ) : (
             <>
@@ -130,6 +138,18 @@ const CompanyCustomer = () => {
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
                 placeholder="Address"
               />
+              <input
+                className="w-full mb-2 p-2 border rounded"
+                value={form.CNSS}
+                onChange={(e) => setForm({ ...form, CNSS: e.target.value })}
+                placeholder="CNSS"
+              />
+              <input
+                className="w-full mb-2 p-2 border rounded"
+                value={form.GPS}
+                onChange={(e) => setForm({ ...form, GPS: e.target.value })}
+                placeholder="GPS"
+              />
 
               <button
                 onClick={handleUpdate}
@@ -149,6 +169,7 @@ const CompanyCustomer = () => {
           </div>
           <p><b>Name :</b> {data.activity.name}</p>
           <p><b>Description :</b> {data.activity.description}</p>
+          <p><b>product Type :</b> {data.company.productType}</p>
         </div>
 
         {/* === CLIENT === */}

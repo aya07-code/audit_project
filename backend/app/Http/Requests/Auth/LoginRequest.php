@@ -45,7 +45,18 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'email' => 'Incorrect email or password.',
+            ]);
+        }
+
+        $user = Auth::user();
+
+        // 🚫 Check activation
+        if (! $user->is_active) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account is not yet approved by admin.',
             ]);
         }
 

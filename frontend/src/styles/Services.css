@@ -11,7 +11,7 @@
   color: #1E3A8A;
   margin-bottom: 0.5rem;
   text-align: left;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .divider {
@@ -94,4 +94,29 @@
   line-height: 1.6;
   z-index: 1;
   position: relative;
+}
+
+
+@media (max-width: 1024px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .services-section {
+    padding: 2rem 1.5rem;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .services-section h2 {
+    text-align: center;
+  }
+
+  .divider {
+    margin: 0.5rem auto 2rem;
+  }
 }

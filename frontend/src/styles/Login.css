@@ -111,6 +111,9 @@
 }
 
 @media (max-width: 640px) {
+    .auth-container {
+        padding: 0.5rem;
+    }
     .auth-box {
         padding: 1.5rem;
     }

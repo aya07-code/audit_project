@@ -48,3 +48,8 @@
     gap: 0.8rem;
   }
 }
+@media (max-width: 600px) {
+  .footer-wrapper {
+    gap: 1rem;
+  }
+}

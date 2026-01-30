@@ -46,10 +46,10 @@ const Hero = () => {
                 onBlur={() => setFocused(null)}
                 tabIndex={0}
               >
-                <h1>AUDIT • TRAINING • CERTIFICATION</h1>
-                <p>
-                We help businesses achieve compliance with international standards such as 
-                SMETA, BSCI, SA8000, WRAP, and ISO 9001.</p>
+            <h1> TELEPHONE SUPPORT • SOCIAL AUDITS • TECHNICAL SUPPORT</h1>
+            <p>
+              We support businesses in meeting international standards, including SMETA, BSCI, SA8000, WRAP, and ISO 9001, through professional audit, training, and certification services.
+            </p>
                 <button  onClick={() => navigate("/audits")}>Découvrir</button>
               </div>
             </div>

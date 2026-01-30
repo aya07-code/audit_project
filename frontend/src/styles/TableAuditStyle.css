@@ -1,0 +1,107 @@
+/* إخفاء scroll bar */
+.hide-scroll::-webkit-scrollbar { display: none; }
+.hide-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* Hover و focus */
+.table-responsive tr:hover { background-color: #f9fafb; }
+.table-responsive input:focus,
+.table-responsive select:focus { outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); }
+
+/* Pagination */
+.table-responsive .flex.gap-3 button {
+  color: #3B82F6;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+.table-responsive .flex.gap-3 button:disabled {
+  background: #93C5FD;
+  cursor: not-allowed;
+}
+
+/* Save / Submit buttons */
+.table-responsive button.bg-blue-600,
+.table-responsive button.bg-green-600 {
+  font-size: 14px;
+  padding: 10px 10px;
+  transition: 0.2s;
+}
+.table-responsive button.bg-blue-600:hover { background-color: #2563EB; }
+.table-responsive button.bg-green-600:hover { background-color: #059669; }
+
+.table-scroll-x {
+  overflow-x: visible;   /* ما كيبان حتى scroll */
+}
+
+.audit-table {
+  width: 100%;
+  min-width: 0;          /* مهم */
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+
+  .table-responsive { overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+  .table-responsive table { width: max-content; }
+  th, td { white-space: nowrap; font-size: 12px; padding: 6px 8px; }
+
+  .table-scroll-x {
+    overflow-x: auto;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .audit-table {
+    min-width: 900px; /* forces horizontal scroll */
+  }
+
+  .audit-table th,
+  .audit-table td {
+    white-space: nowrap;
+  }
+  .table-scroll-x::after {
+    content: "⇠ swipe ⇢";
+    position: sticky;
+    left: 50%;
+    transform: translateX(-50%);
+    display: block;
+    text-align: center;
+    font-size: 10px;
+    color: #6b7280;
+    padding: 4px 0;
+    background: linear-gradient(to right, transparent, #fff, transparent);
+  }
+
+}
+
+@media (max-width: 360px) {
+
+  .table-responsive {
+    padding: 8px;
+  }
+
+  .audit-table {
+    min-width: 1100px; /* باش columns ما يتقصّعوش */
+    font-size: 11px;
+  }
+
+  .audit-table th,
+  .audit-table td {
+    padding: 6px 6px;
+  }
+
+  .table-scroll-x {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .table-scroll-x::after {
+    content: "⇠ swipe ⇢";
+    display: block;
+    text-align: center;
+    font-size: 10px;
+    color: #6b7280;
+    padding: 4px 0;
+  }
+}
+
+

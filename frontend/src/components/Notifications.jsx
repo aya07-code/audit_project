@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Bell, Eye, Trash2, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import showContactMessage from "./ContactMessageModal";
+import showAuditStarted from "./ShowAuditStarted";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -15,7 +17,7 @@ const Notifications = () => {
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://127.0.0.1:8000/api/notifications/user", {
+      const res = await axios.get("https://alloaudit.com/api/notifications/user", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setNotifications(res.data);
@@ -28,7 +30,7 @@ const Notifications = () => {
   const markAsRead = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`http://127.0.0.1:8000/api/notifications/${id}/mark-as-read`, {}, {
+      await axios.post(`https://alloaudit.com/api/notifications/${id}/mark-as-read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchNotifications();
@@ -40,7 +42,7 @@ const Notifications = () => {
   const markAllAsRead = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://127.0.0.1:8000/api/notifications/mark-all-read", {}, {
+      await axios.post("https://alloaudit.com/api/notifications/mark-all-read", {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchNotifications();
@@ -52,7 +54,7 @@ const Notifications = () => {
   const deleteNotification = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://127.0.0.1:8000/api/notifications/${id}`, {
+      await axios.delete(`https://alloaudit.com/api/notifications/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchNotifications();
@@ -60,6 +62,42 @@ const Notifications = () => {
       console.error("Error deleting notification:", error);
     }
   };
+
+  const getTypeStyle = (type) => {
+    switch (type) {
+      case "contact_message":
+        return {
+          bg: "bg-blue-100 border-blue-300",
+          badge: "bg-[#1E3A8A] text-white",
+          label: "Contact Message"
+        };
+      case "customer_registration":
+        return {
+          bg: "bg-green-100 border-green-300",
+          badge: "bg-[#10B981] text-white",
+          label: "New Customer"
+        };
+      case "audit_payment":
+        return { 
+          bg: "bg-purple-100 border-purple-300", 
+          badge: "bg-purple-600 text-white", 
+          label: "Payment" 
+        };
+      case "audit_started":
+        return {
+          bg: "bg-gray-100 border-gray-300",
+          badge: "bg-gray-500 text-white",
+          label: "Audit Started"
+        };
+      default:
+        return {
+          bg: "bg-yellow-100 border-yellow-300",
+          badge: "bg-yellow-600 text-white",
+          label: "Audit Submitted"
+        };
+    }
+  };
+
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg my-8">
@@ -89,28 +127,54 @@ const Notifications = () => {
           No notifications
           </div>
         ) : (
-          notifications.map(notification => (
+        notifications.map(notification => {
+          const style = getTypeStyle(notification.type); 
+
+          return (
             <div
               key={notification.id}
-              className={`p-4 border rounded-lg flex justify-between items-start ${
-                !notification.is_read ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'
+              className={`p-4 border rounded-lg flex justify-between items-start ${style.bg} ${
+                !notification.is_read ? "shadow-sm" : "opacity-90"
               }`}
             >
               <div className="flex-1">
-                <p className="text-gray-800 mb-2">{notification.text}</p>
+
+                {/* badge dyal type */}
+                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${style.badge}`}>
+                  {style.label}
+                </span>
+
+                {/* text */}
+                <p className="text-gray-800 mt-2 mb-2">{notification.text}</p>
+
+                {/* date */}
                 <div className="flex gap-4 text-sm text-gray-500">
-                  <span>Type: {notification.type}</span>
-                  <span>date:{new Date(notification.created_at).toLocaleDateString()}</span>
+                  <span>Date: {new Date(notification.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
               
               <div className="flex gap-2">
-                  <button
-                    onClick={() => navigate(`/audit-details/${notification.audit_id}/${notification.company_id}`)}
-                    className="text-blue-600 hover:text-blue-900"
-                  >
-                    <Eye size={20} />
-                  </button>
+                <button
+                  onClick={() => {
+                    if (notification.type === "contact_message") {
+                      showContactMessage(notification);
+                    } else if (notification.type === "customer_registration") {
+                      navigate("/admin/customers");
+                    } else if (notification.type === "audit_payment") {
+                        navigate(`/admin/payments/${notification.payment_id}`);
+                    } else if (notification.type === "audit_submission") {
+                      navigate(`/audit-details/${notification.audit_id}/${notification.company_id}`);
+                    } else if (notification.type === "audit_started") {
+                      showAuditStarted(notification);
+                    } else {
+                      console.warn("No action defined for this notification type");
+                    }
+                  }}
+                  className="text-blue-600 hover:text-blue-900"
+                >
+                  <Eye size={20} />
+                </button>
+
                 {!notification.is_read && (
                   <button
                     onClick={() => markAsRead(notification.id)}
@@ -120,6 +184,7 @@ const Notifications = () => {
                     <CheckCircle size={18} />
                   </button>
                 )}
+
                 <button
                   onClick={() => deleteNotification(notification.id)}
                   className="text-red-600 hover:text-red-800"
@@ -129,7 +194,8 @@ const Notifications = () => {
                 </button>
               </div>
             </div>
-          ))
+          );
+        })
         )}
       </div>
     </div>

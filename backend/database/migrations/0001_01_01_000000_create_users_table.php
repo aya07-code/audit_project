@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('phone');
             $table->string('adress');
             $table->string('ville');
+             $table->text('unapprove_reason')->nullable();
             $table->enum('role', ['admin', 'customer'])->default('customer');
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->default(false);
             $table->unsignedBigInteger('admin_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

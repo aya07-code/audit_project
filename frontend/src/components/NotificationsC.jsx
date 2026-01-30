@@ -13,7 +13,7 @@ const NotificationsC = () => {
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://127.0.0.1:8000/api/notifications/user", {
+      const res = await axios.get("https://alloaudit.com/api/notifications/user", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setNotifications(res.data);
@@ -26,7 +26,7 @@ const NotificationsC = () => {
   const markAsRead = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`http://127.0.0.1:8000/api/notifications/${id}/mark-as-read`, {}, {
+      await axios.post(`https://alloaudit.com/api/notifications/${id}/mark-as-read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchNotifications();
@@ -38,7 +38,7 @@ const NotificationsC = () => {
   const markAllAsRead = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://127.0.0.1:8000/api/notifications/mark-all-read", {}, {
+      await axios.post("https://alloaudit.com/api/notifications/mark-all-read", {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchNotifications();
@@ -47,8 +47,21 @@ const NotificationsC = () => {
     }
   };
 
+  const deleteNotification = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`https://alloaudit.com/api/notifications/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchNotifications();
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+    }
+  };
+
+
   return (
-    <div className="p-4 bg-white shadow-md rounded-lg my-8">
+    <div className=" p-4 bg-white shadow-md rounded-lg my-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-[#1E3A8A] mb-6 flex items-center gap-2">
               <Bell className="text-[#10B981]" />
@@ -86,7 +99,7 @@ const NotificationsC = () => {
                   <div className="flex-1">
                     <p className="text-gray-800 mb-2">{notification.text}</p>
                     <div className="flex gap-4 text-sm text-gray-500">
-                      <span>date: {new Date(notification.created_at).toLocaleString('ar-EG')}</span>
+                      <span>date: {new Date(notification.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
                   
@@ -100,12 +113,19 @@ const NotificationsC = () => {
                         <CheckCircle size={18} />
                       </button>
                     )}
+                    <button
+                      onClick={() => deleteNotification(notification.id)}
+                      className="text-red-600 hover:text-red-800"
+                      title="Delete notification"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+
                   </div>
                 </div>
               ))
             )}
           </div>
-
     </div>
   );
 };

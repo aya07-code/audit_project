@@ -69,6 +69,7 @@
 .hero-overlay h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
+  color: #1E3A8A ;
 }
 
 .hero-overlay p {
@@ -104,3 +105,28 @@
     transform: translateY(0);
   }
 }
+
+@media (max-width: 768px) {
+
+  .hero-container{
+    height: 70vh;
+  }
+
+  .hero-slide {
+    align-items: center; /* 🔥 بدل center */ 
+  }
+
+  .hero-overlay {
+    width: 90%;
+    padding: 1rem;
+  }
+
+  .hero-overlay h1 {
+    font-size: 1.4rem;
+  }
+
+  .hero-overlay p {
+    font-size: 1rem;
+  }
+}
+

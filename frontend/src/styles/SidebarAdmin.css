@@ -70,3 +70,57 @@
   border-radius: 50%;
 }
 
+/* زر الهامبرغر */
+.sidebar-toggle-btn {
+  display: none;
+  position: fixed;
+  top: 100px;
+  left: -10px;
+  background: #1e3a8a;
+  border: none;
+  color: white;
+  font-size: 24px;
+  z-index: 1500;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .sidebar-admin {
+    width: 40%;
+    height: calc(100vh - 40px);
+    top: 40px;
+    left: 0;
+    padding-top: 20px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1200;
+  }
+
+  .sidebar-admin.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-nav {
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sidebar-link,
+  .logout-btn {
+    flex-direction: column;
+    font-size: 11px;
+    padding: 6px 8px;
+    gap: 4px;
+  }
+
+  .sidebar-link svg,
+  .logout-btn svg {
+    font-size: 18px;
+  }
+
+  .sidebar-toggle-btn {
+    display: block;
+  }
+}

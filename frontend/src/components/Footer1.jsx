@@ -6,7 +6,7 @@ function Footer1() {
   return (
     <footer className="footer-section1">
       <div className="footer-wrapper1">
-        <p>&copy; {new Date().getFullYear()} IA-Net Morocco. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Allo Audit. All rights reserved.</p>
         <div className="footer-socials1">
           <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
             <FaFacebookF />

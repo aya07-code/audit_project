@@ -50,6 +50,24 @@
 .social-connect a:hover {
     color: #90caf9;
 }
-@media (max-width: 820px) {
-  .contact-info { display: none; } /* ou .contact-info { font-size:12px; } selon préférence */
+@media (max-width: 768px) {
+  .topbar {
+    padding: 6px 10px;
+    z-index: 1000;
+  }
+
+  .contact-info {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+  }
+
+  /* نخبي العنوان */
+  .contact-info span:first-child {
+    display: none;
+  }
+
+  .contact-info span {
+    font-size: 12px;
+  }
 }

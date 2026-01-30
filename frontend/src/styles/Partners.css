@@ -69,3 +69,8 @@
     height: 70px;
   }
 }
+@media (max-width: 600px) {
+  .slider {
+    animation-duration: 12s;
+  }
+}

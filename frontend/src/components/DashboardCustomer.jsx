@@ -7,7 +7,7 @@ import DashboardHomeC from "./DashboardHomeC";
 const DashboardCustomer = () => {
   return (
     <div className="customer-dashboard">
-      <Sidebar />
+        <Sidebar />
       <SidebarCustomer />
       <main className="customer-content">
         <DashboardHomeC />

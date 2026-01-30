@@ -10,15 +10,15 @@ class Payment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['audit_id', 'client_id', 'amount', 'method', 'status', 'date'];
-
-    public function audit()
-    {
-        return $this->belongsTo(Audit::class);
-    }
+    protected $fillable = [ 'client_id','audit_id', 'amount', 'method', 'status', 'due_date','is_paid','attachment'];
 
     public function client()
     {
         return $this->belongsTo(Customer::class, 'client_id');
+    }
+
+    public function audit()
+    {
+        return $this->belongsTo(Audit::class);
     }
 }

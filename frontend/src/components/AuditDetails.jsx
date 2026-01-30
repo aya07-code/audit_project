@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ArrowLeft, FileDown, Save } from "lucide-react";
+import { ArrowLeft, FileDown, Save, CheckCircle } from "lucide-react";
+import Swal from "sweetalert2";
+import AuditDetailStyle from "../styles/AuditDetailStyle.css";
 
 const AuditDetails = () => {
   const { auditId, companyId } = useParams();
@@ -10,15 +12,22 @@ const AuditDetails = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState({});
   const token = localStorage.getItem("token");
+  const [currentPage, setCurrentPage] = useState(1);
+  const QUESTIONS_PER_PAGE = 10;
 
   useEffect(() => {
     fetchAuditDetails();
   }, [auditId, companyId]);
 
+  useEffect(() => {
+    const container = document.getElementById("questions-container1");
+    if (container) container.scrollTop = 0;
+  }, [currentPage]);
+
   const fetchAuditDetails = async () => {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/client/audit/${auditId}/${companyId}`,
+        `https://alloaudit.com/api/client/audit/${auditId}/${companyId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setAudit(res.data);
@@ -29,34 +38,41 @@ const AuditDetails = () => {
     }
   };
 
-  const handleAnswerChange = (questionId, field, value) => {
-    setAudit(prev => ({
+  const handleChange = (questionId, field, value) => {
+    setAudit((prev) => ({
       ...prev,
-      questions: prev.questions.map(q =>
-        q.id === questionId ? { ...q, answer: { ...q.answer, [field]: value } } : q
-      )
+      questions: prev.questions.map((q) =>
+        q.id === questionId
+          ? { ...q, answer: { ...q.answer, [field]: value } }
+          : q
+      ),
     }));
-    setEditing(prev => ({ ...prev, [questionId]: true }));
+    setEditing((prev) => ({ ...prev, [questionId]: true }));
   };
 
-  const saveAnswer = async (questionId) => {
-    const q = audit.questions.find(q => q.id === questionId);
-    if (!q?.answer) return;
+  const saveValidation = async (questionId) => {
+    const q = audit.questions.find((q) => q.id === questionId);
 
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/answers/update-or-create/${auditId}`,
+        `https://alloaudit.com/api/answers/validate/${auditId}`,
         {
           question_id: questionId,
-          choice: q.answer.choice,
-          justification: q.answer.justification,
-          customer_id: audit.customer_id
+          customer_id: audit.customer_id,
+          comment_admin: q.answer.comment_admin,
+          validation_status: q.answer.validation_status,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setEditing(prev => ({ ...prev, [questionId]: false }));
-      fetchAuditDetails();
+      Swal.fire({
+        icon: "success",
+        title: "Saved successfully!",
+        timer: 1000,
+        showConfirmButton: false,
+      });
+
+      setEditing((prev) => ({ ...prev, [questionId]: false }));
     } catch (err) {
       console.error(err);
     }
@@ -65,163 +81,313 @@ const AuditDetails = () => {
   const generatePDF = async () => {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/reports/audits/${auditId}/customer/${audit.customer_id}`,
+        `https://alloaudit.com/api/reports/audits/${auditId}/customer/${audit.customer_id}`,
         { headers: { Authorization: `Bearer ${token}` }, responseType: "blob" }
       );
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `audit ${audit.title} of company ${audit.company_name}.pdf`);
-      document.body.appendChild(link);
+      link.download = `Audit-${audit.title}.pdf`;
       link.click();
-      link.remove();
     } catch (err) {
       console.error(err);
     }
   };
 
-  if (loading) return <p className="text-center mt-20 text-gray-500">Loading audit...</p>;
-  if (!audit) return <p className="text-center mt-20 text-red-600">Audit not found.</p>;
+  const generateCAP = async () => {
+    try {
+      const res = await axios.get(
+        `https://alloaudit.com/api/reports/cap/${auditId}/customer/${audit.customer_id}`,
+        { headers: { Authorization: `Bearer ${token}` }, responseType: "blob" }
+      );
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `CAP-${audit.title}.pdf`;
+      link.click();
+    } catch (err) {
+      console.error("CAP generation error:", err);
+    }
+  };
+
+  const generateZip = async () => {
+    try {
+      const res = await axios.get(
+        `https://alloaudit.com/api/reports/zip/${auditId}/customer/${audit.customer_id}`,
+        { headers: { Authorization: `Bearer ${token}` }, responseType: "blob" }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Attachments-${audit.title}.zip`;
+      link.click();
+    } catch (err) {
+      console.error("ZIP error:", err);
+    }
+  };
+  
+  const uploadAdminFile = async (questionId, answerId, file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      await axios.post(
+        `https://alloaudit.com/api/answers/${answerId}/admin-attachment`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Attachment added!",
+        timer: 1000,
+        showConfirmButton: false,
+      });
+
+      fetchAuditDetails(); // refresh
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  if (loading)
+    return <p className="text-center mt-20 text-gray-500">Loading...</p>;
+  if (!audit)
+    return <p className="text-center mt-20 text-red-600">Audit not found.</p>;
+
+  const indexOfLast = currentPage * QUESTIONS_PER_PAGE;
+  const indexOfFirst = indexOfLast - QUESTIONS_PER_PAGE;
+  const currentQuestions = audit.questions.slice(indexOfFirst, indexOfLast);
+
+  const totalPages = Math.ceil(audit.questions.length / QUESTIONS_PER_PAGE);
 
   return (
-    <div className="-mt-[60px]">
-     <div className="px-6 py-10 max-w-4xl mx-auto">
-      
-      {/* Retour */}
+    <div className="bg-[#F1F5F9] min-h-screen py-5 px-6 -mt-12 hide-scroll"  id="questions-container1" style={{ maxHeight: "600px", overflowY: "auto" }}>
+      {/* BACK BUTTON */}
       <button
         onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-blue-700 hover:underline mb-6"
+        className="flex items-center gap-2 text-blue-700 hover:text-blue-900 mb-2 font-medium"
       >
-        <ArrowLeft size={18} /> Retour
+        <ArrowLeft size={18} />
+        Back
       </button>
-
-    {/* Header Card */}
-    <div className="bg-white shadow-xl rounded-2xl p-7 border border-blue-50 relative overflow-hidden">
-
-    {/* Decorative Top Bar */}
-    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-200 to-blue-100 rounded-t-2xl"></div>
-
-    <h2 className="text-2xl text-blue-900 font-extrabold mb-2">
-        {audit.title}
-    </h2>
-
-    <p className="text-gray-700 mb-4 text-base leading-relaxed">
-        {audit.description}
-    </p>
-
-    {/* Info Grid */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-
-        <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-        <strong className="text-blue-800">Date :</strong>
-        <span className="ml-2">
-            {new Date(audit.date).toLocaleDateString()}
-        </span>
-        </div>
-
-        <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-        <strong className="text-blue-800">Score :</strong>
-        <span className="ml-2">{audit.score ?? "—"}%</span>
-        </div>
-
-        <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 ">
-        <strong className="text-blue-800">Status :</strong>
-        <span className={"ml-2"}>{audit.status}</span>
-        </div>
-
-        <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-        <strong className="text-blue-800">Answered :</strong>
-        <span className="ml-2">
-            {audit.answered_count}/{audit.total_questions}
-        </span>
-        </div>
-    </div>
-
-    {/* Button */}
-    <button
-        onClick={generatePDF}
-        className="mt-5 flex items-center gap-2 bg-blue-700 text-white px-5 py-2.5 rounded-lg hover:bg-blue-800 transition shadow-md"
-    >
-        <FileDown size={18} />
-        Download PDF Report
-    </button>
-    </div>
-
-
-    {/* Questions */}
-    <div className="mt-10">
-
-    <div className="space-y-5">
-        {audit.questions.map((q) => (
-        <div
-            key={q.id}
-            className="p-5 bg-gradient-to-br from-white to-blue-100 border border-blue-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+      {/* HEADER CARD */}
+      <div>
+        <h3 className="text-2xl font-extrabold text-blue-900">{audit.title}</h3>
+        <div className="grid grid-cols-7 gap-2">
+        <button
+          onClick={generatePDF}
+          className="mt-2 inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-2 py-2 rounded-lg shadow"
         >
-            {/* Question Title */}
-            <div className="flex items-start justify-between">
-            <p className="font-semibold text-gray-700 text-lg">{q.text}</p>
-
-            {q.answer ? (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                Answered
-                </span>
-            ) : (
-                <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
-                Not answered
-                </span>
-            )}
-            </div>
-
-            {/* If answered */}
-            {q.answer && (
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-                {/* Choice */}
-                <div>
-                <label className="text-sm font-medium text-gray-600">Choice</label>
-                <select
-                    value={q.answer.choice}
-                    onChange={(e) => handleAnswerChange(q.id, "choice", e.target.value)}
-                    className="mt-1 w-full border rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-400"
-                >
-                    <option value="Oui">Yes</option>
-                    <option value="Non">No</option>
-                    <option value="N/A">N/A</option>
-                </select>
-                </div>
-
-                {/* Justification */}
-                <div>
-                <label className="text-sm font-medium text-gray-600">
-                    Justification
-                </label>
-                <input
-                    type="text"
-                    value={q.answer.justification || ""}
-                    onChange={(e) =>
-                    handleAnswerChange(q.id, "justification", e.target.value)
-                    }
-                    className="mt-1 w-full border rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-400"
-                />
-                </div>
-            </div>
-            )}
-
-            {/* Save Button */}
-            {editing[q.id] && (
-            <button
-                onClick={() => saveAnswer(q.id)}
-                className="mt-4 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-            >
-                <Save size={16} /> Sauvegarder
-            </button>
-            )}
+          <FileDown size={16} />
+          Download Report
+        </button>
+        <button
+           onClick={generateCAP}
+          className="mt-2 inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-2 py-2 rounded-lg shadow"
+        >
+          <FileDown size={16} />
+          Download CAPR
+        </button>
+        <button
+           onClick={generateZip}
+          className="mt-2 inline-flex items-center gap-2 bg-gray-400 hover:bg-gray-600 text-white px-2 py-2 rounded-lg shadow"
+        >
+          <FileDown size={16} />
+          Photos Report
+        </button>
         </div>
-        ))}
-    </div>
-    </div>
+      </div>
 
-     </div>
+      {/* QUESTIONS LIST */}
+      <div className="mt-5 space-y-6 hide-scroll">
+        {currentQuestions.map((q) => (
+          <div
+            key={q.id}
+            className="bg-white p-4 rounded-lg shadow-sm border border-[#E2E8F0] hover:shadow-md transition-all "
+          >
+            {/* Question title */}
+            <p className="font-semibold text-[#1E293B] text-lg">{q.text}</p>
+
+            {/* ANSWERS */}
+            {q.answer && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:col-span-2 -mt-5">
+
+                {/* CHOICE */}
+                <div>
+                  <label className="text-sm font-medium text-[#64748B]">Answer</label>
+                  <input
+                    disabled
+                    value={q.answer.choice}
+                    className="w-full mt-1 p-1 border border-[#E2E8F0] rounded-lg bg-[#F8FAFC] text-gray-700"
+                  />
+                </div>
+
+                {/* JUSTIFICATION */}
+                <div>
+                  <label className="text-sm font-medium text-[#64748B]">Proof</label>
+                  <textarea
+                    disabled
+                    value={q.answer.reponse || ""}
+                    className="w-full mt-1 p-1 border border-[#E2E8F0] rounded-lg bg-[#F8FAFC] text-gray-700"
+                    rows={1} 
+                  />
+                </div>
+
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:col-span-2 -mt-5">
+                {/* DATE */}
+                <div>
+                  <label className="text-sm font-medium text-[#64748B]">
+                    Date
+                  </label>
+                  <input
+                    disabled
+                    type="date"
+                    value={q.answer.date || ""}
+                    className="w-full mt-1 p-1 border border-[#E2E8F0] rounded-lg bg-[#F8FAFC]"
+                  />
+                </div>
+
+                {/* ORGANIZATION */}
+                <div>
+                  <label className="text-sm font-medium text-[#64748B]">
+                    Organization
+                  </label>
+                  <input
+                    disabled
+                    value={q.answer.certificate_organisme || ""}
+                    className="w-full mt-1 p-1 border border-[#E2E8F0] rounded-lg bg-[#F8FAFC]"
+                  />
+                </div>
+                {/* CUSTOMERS COUNT */}
+                <div>
+                  <label className="text-sm font-medium text-[#64748B]">
+                   Other
+                  </label>
+                  <input
+                    disabled
+                    value={q.answer.certificate_customers_count || ""}
+                    className="w-full mt-1 p-1 border border-[#E2E8F0] rounded-lg bg-[#F8FAFC]"
+                  />
+                </div>
+              </div>
+
+                {/* FILE */}
+                {q.answer.attachment && (
+                  <div className="md:col-span-2">
+                    <a
+                      href={`https://alloaudit.com/storage/${q.answer.attachment}`}
+                      target="_blank"
+                      className="text-blue-600 underline text-sm"
+                    >
+                      📎View Attachment
+                    </a>
+                  </div>
+                )}
+              {/* PARTIE ADMIN */}
+              <div className="grid grid-cols-1 md:grid-cols-8 gap-4 md:col-span-2 -mt-2 p-2 bg-[#E0F2FE] rounded-lg border border-[#BEE3F8]">
+                {/* VALIDATION + ADMIN COMMENT (80%) */}
+                <div className="md:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* VALIDATION */}
+                  <div>
+                    <label className="text-sm font-semibold text-[#1E293B]">
+                      Validation Status
+                    </label>
+                    <select
+                      value={q.answer.validation_status || ""}
+                      onChange={(e) =>
+                        handleChange(q.id, "validation_status", e.target.value)
+                      }
+                      className="w-full mt-1 p-1 border border-[#E2E8F0] rounded-lg bg-white"
+                    >
+                      <option value="">Select...</option>
+                      <option value="accurate">Correct</option>
+                      <option value="inaccurate">Incorrect</option>
+                    </select>
+                  </div>
+
+                  {/* ADMIN COMMENT */}
+                  <div>
+                    <label className="text-sm font-semibold text-[#1E293B]">
+                      Auditor Feedback:
+                    </label>
+                    <textarea
+                      value={q.answer.comment_admin || ""}
+                      onChange={(e) =>
+                        handleChange(q.id, "comment_admin", e.target.value)
+                      }
+                      className="w-full mt-1 p-1 border border-[#E2E8F0] rounded-lg bg-white text-gray-700"
+                      rows={1}  
+                    />
+                  </div>
+                </div>
+
+                {/* ADMIN Attachment Button (20%) */}
+                <div className="md:col-span-1 flex items-end">
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx"
+                    id={`admin-upload-${q.id}`}
+                    className="hidden"
+                    onChange={(e) => uploadAdminFile(q.id, q.answer.id, e.target.files[0])}
+                  />
+                  <label
+                    htmlFor={`admin-upload-${q.id}`}
+                    className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white p-1.5 mb-2 rounded-lg shadow cursor-pointer text-sm transition w-full"
+                  >
+                    + Add Attachment
+                  </label>
+                </div>
+              </div>
+
+              </div>
+            )}
+
+            {/* SAVE BUTTON */}
+            {editing[q.id] && (
+              <button
+                onClick={() => saveValidation(q.id)}
+                className="mt-5 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow"
+              >
+                <CheckCircle size={18} />
+                Save changes
+              </button>
+            )}
+          </div>
+          
+        ))}
+{/* --- PAGINATION MODERNE --- */}
+          <div className="flex items-center justify-center gap-3 mt-4">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => prev - 1)}
+              className="px-4 py-2  disabled:opacity-40 transition"
+            >
+              ◀
+            </button>
+            <span className="px-4 py-1 text-sm font-semibold bg-blue-100 text-blue-700 rounded-full shadow">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                className="px-4 py-2  disabled:opacity-40 transition"
+            >
+              ▶
+            </button>
+          </div>
+
+      </div>
     </div>
   );
 };

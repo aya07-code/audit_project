@@ -1,0 +1,32 @@
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .home {
+    margin-left:-30px;
+  }
+  .home h1 {
+    font-size: 1.7rem;
+  }
+
+  .admin-dashboard .grid {
+    gap: 1rem !important;
+  }
+
+    .bg-white {
+    padding: 1rem !important;
+  }
+
+  .recharts-responsive-container {
+    height: 220px !important;
+  }
+
+  .admin-dashboard h2 {
+    font-size: 1rem;
+  }
+
+  .recharts-cartesian-axis-tick text {
+    font-size: 10px !important;
+  }
+}

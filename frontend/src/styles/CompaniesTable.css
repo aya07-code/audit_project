@@ -1,0 +1,29 @@
+/* Conteneur du tableau pour scroll horizontal */
+.companies-table-wrapper {
+  overflow-x: auto; /* scroll horizontal si besoin */
+  -webkit-overflow-scrolling: touch; /* fluidité sur iOS */
+}
+
+/* Tableau responsive */
+.companies-table-wrapper table {
+  width: 100%;
+  min-width: 600px; /* garde la lisibilité sur mobile */
+  border-collapse: collapse;
+}
+
+/* Cellules */
+.companies-table-wrapper th,
+.companies-table-wrapper td {
+  padding: 0.75rem;
+  text-align: left;
+  white-space: nowrap; /* empêche le texte de casser */
+}
+
+/* Mobile : ajustement padding et taille texte */
+@media (max-width: 768px) {
+  .companies-table-wrapper th,
+  .companies-table-wrapper td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.875rem;
+  }
+}

@@ -9,12 +9,7 @@ class AuditCompany extends Model
 {
     use HasFactory;
     protected $table = 'audit_company';
-    protected $fillable = [
-        'audit_id',
-        'company_id',
-        'date',
-        'score'
-    ];
+    protected $fillable = [ 'audit_id', 'company_id', 'date', 'score', 'status'];
     public function audit()
     {
         return $this->belongsTo(Audit::class);
